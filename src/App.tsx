@@ -1,26 +1,24 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom"
+import { CircularProgress } from "@mui/material"
+import RootLayout from "./layouts/RootLayout"
+import { lazy } from "react"
+import RootBoundary from "./boundaries/RootBoundary"
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const Home = lazy(() => import("./pages/Home"))
+
+const router = createBrowserRouter(
+    createRoutesFromElements(
+        <Route path="/" element={<RootLayout/>} errorElement={<RootBoundary/>}>
+            <Route path="" element={<Home/>}/>
+        </Route>
+    )
+)
+
+export default function App() {
+    return (
+        <RouterProvider
+            router={router}
+            fallbackElement={<CircularProgress/>}
+        />
+    )
 }
-
-export default App;
