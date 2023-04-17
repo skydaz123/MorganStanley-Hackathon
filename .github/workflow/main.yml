@@ -1,15 +1,19 @@
-name: Generate a build from main and push to gh-pages
+name: Run project test files
 
 on:
   push:
-    branches: [main, dev]
+    branches:
+      - main
+      - dev
   pull_request:
-    branches: [main, dev]
+    branches:
+      - main
+      - dev
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: build and push to gh-pages
+    name: run test files
     steps:
       - name: git-checkout
         uses: actions/checkout@v3.3.0
