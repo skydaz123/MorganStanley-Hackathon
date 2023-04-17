@@ -4,6 +4,7 @@ import { getDemoSlice } from "../redux/store"
 import { useState } from "react"
 import { changeName } from "../redux/slices/demoSlice"
 import pika from "../images/surprised-pikachu.png"
+import RandomHeader from "../components/RandomHeader"
 
 export default function Home() {
     const dispatch = useDispatch()
@@ -43,6 +44,7 @@ export default function Home() {
                     />
                 </Box>
             </Stack>
+            <RandomHeader name="some component"/>
         </Stack>
     )
 }
