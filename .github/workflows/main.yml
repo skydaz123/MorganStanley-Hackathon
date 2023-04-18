@@ -18,8 +18,11 @@ jobs:
       - name: git-checkout
         uses: actions/checkout@v3.3.0
 
+      - name: go to client code
+        run: cd ./client
+
       - name: install node modules
         run: npm i
 
-      - name: test app
+      - name: run client test files
         run: npm run test
