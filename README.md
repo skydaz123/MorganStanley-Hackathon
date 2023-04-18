@@ -1,4 +1,4 @@
-# morgan-stanley-frontend
+# morgan-stanley
 
 ### Git Logistics [MUST READ]
 - We will use `main` branch to host our production code.
@@ -8,6 +8,10 @@
 - When you are done, please make a pull request from your feature branch to `dev`.
 - When we are ready, we will make a pull request from `dev` to `main` to push to production.
 
+---
+
+## Frontend
+
 ### Technologies
 - **MUI** for styling, components, and icons
 - **Redux Toolkit** for connecting to server and caching responses
@@ -16,3 +20,10 @@
 
 ### .env
 You will not be able to run the project later down the line without a proper .env file. Please get it from us.
+
+---
+
+## Backend
+
+### Technologies
+- *TBA*
