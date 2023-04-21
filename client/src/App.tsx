@@ -8,6 +8,7 @@ const HeaderLayout = lazy(() => import("./layouts/SplashLayout"))
 const Home = lazy(() => import("./pages/Home"))
 const Login = lazy(() => import("./pages/Login"))
 const RoleSelection = lazy(() => import("./pages/RoleSelection"))
+const Map = lazy(() => import("./components/Map"));
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -17,6 +18,8 @@ const router = createBrowserRouter(
             </Route>
             <Route path="login" element={<Login/>}/>
             <Route path="role-selection" element={<RoleSelection/>}/>
+
+            <Route path="map" element={<Map/>}/>
         </Route>
     )
 )
