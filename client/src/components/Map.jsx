@@ -22,6 +22,10 @@ const myIcon = new Icon({
     iconAnchor: [12, 41],
 });
 
+const southWest = L.latLng(-90, -180);
+const northEast = L.latLng(90, 180);
+const bounds = L.latLngBounds(southWest, northEast);
+
 function handleClick() {
     console.log("pressed")
 }
@@ -69,7 +73,7 @@ export default function Map() {
                 style={{ height: '100vh', width: '100wh', position: 'relative' }}
                 center={[0, 0]}
                 zoom={3}
-
+                maxBounds={bounds}
             >
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
