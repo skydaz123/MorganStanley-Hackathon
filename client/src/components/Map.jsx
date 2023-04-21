@@ -22,15 +22,6 @@ const myIcon = new Icon({
     iconAnchor: [12, 41],
 });
 
-let data = [
-  {lat: 33.7671923, lng: -84.40537119999999},
-  {lat: 33.79994, lng: -84.42485099999999},
-  {lat: 33.7749219, lng: -84.2929674},
-  {lat: 33.627911, lng: -84.4715296},
-  {lat: 33.78034239999999, lng: -84.410242},
-  {lat: 33.7485041, lng: -84.3365784}
-];
-
 const southWest = L.latLng(-90, -180);
 const northEast = L.latLng(90, 180);
 const bounds = L.latLngBounds(southWest, northEast);
