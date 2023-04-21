@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material"
-import logo from "../images/acfb-logo.png"
+import logo from "../../images/acfb-logo.png"
 
 export default function BigLoader() {
     return (
