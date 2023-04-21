@@ -5,11 +5,13 @@ import { lazy } from "react"
 import RootBoundary from "./boundaries/RootBoundary"
 
 const Home = lazy(() => import("./pages/Home"))
+const Map = lazy(() => import("./components/Map"));
 
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path="/" element={<RootLayout/>} errorElement={<RootBoundary/>}>
             <Route path="" element={<Home/>}/>
+            <Route path="Map" element={<Map/>}/>
         </Route>
     )
 )
