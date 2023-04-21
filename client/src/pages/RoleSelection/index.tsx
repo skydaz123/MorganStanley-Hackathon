@@ -9,7 +9,7 @@ import Card from "./Card"
 const ROLES = [
     { id: 1, name: "Distributor" },
     { id: 2, name: "Partner" },
-    { id: 2, name: "To Be Added" },
+    { id: 3, name: "To Be Added" },
 ]
 
 export default function RoleSelection() {
