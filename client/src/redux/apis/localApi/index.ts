@@ -1,9 +1,9 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react"
-import { BACKEND_URL } from "../../environment"
+import { BACKEND_URL } from "../../../environment"
 import tagTypes from "./tagTypes"
 
-const rootApi = createApi({
-    reducerPath: 'rootApi',
+const localApi = createApi({
+    reducerPath: 'localApi',
     baseQuery: retry(fetchBaseQuery({
         baseUrl: `${BACKEND_URL}/api`,
         prepareHeaders: (headers, api) => {
@@ -15,4 +15,4 @@ const rootApi = createApi({
     endpoints: builder => ({}),
 })
 
-export default rootApi
+export default localApi
