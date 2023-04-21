@@ -18,7 +18,9 @@ export default function RegisterComponent() {
             street: "",
             city: "",
             state: "",
-            zip: ""
+            zip: "",
+            maxCapacity: "",
+            fridgeNumber: ""
         },
         mode: "all"
     })
@@ -45,6 +47,8 @@ export default function RegisterComponent() {
                 <FormField id="city" control={control} placeholder="City"/>
                 <FormField id="state" control={control} placeholder="State/Province"/>
                 <FormField id="zip" control={control} placeholder="Zip/Postal Code"/>
+                <FormField id="maxCapacity" control={control} label="Please enter the max capacity of food your establishment can hold (in lbs)" separateLabel/>
+                <FormField id="fridgeNumber" control={control} label="Please enter the number of fridges your establishment contains" separateLabel/>
                 <Button variant="outlined" sx={{
                     border: '3px solid #EC701B !important',
                     '&:hover': {
