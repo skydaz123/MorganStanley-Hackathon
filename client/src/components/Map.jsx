@@ -9,7 +9,7 @@ import L, { Icon } from 'leaflet';
 // import 'leaflet-routing-machine/dist/leaflet-routing-machine.js';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import 'leaflet/dist/leaflet.css';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 import { MapContainer, TileLayer, useMap, useMapEvent, } from 'react-leaflet';
 import { Link } from 'react-router-dom';
@@ -22,6 +22,15 @@ const myIcon = new Icon({
     iconAnchor: [12, 41],
 });
 
+let data = [
+  {lat: 33.7671923, lng: -84.40537119999999},
+  {lat: 33.79994, lng: -84.42485099999999},
+  {lat: 33.7749219, lng: -84.2929674},
+  {lat: 33.627911, lng: -84.4715296},
+  {lat: 33.78034239999999, lng: -84.410242},
+  {lat: 33.7485041, lng: -84.3365784}
+];
+
 const southWest = L.latLng(-90, -180);
 const northEast = L.latLng(90, 180);
 const bounds = L.latLngBounds(southWest, northEast);
@@ -32,19 +41,27 @@ function handleClick() {
 
 export default function Map() {
     function MapC() {
-        const map = useMap();
-        map.removeControl(map.zoomControl);
-        //comment below to remove Attribution text
-        map.attributionControl.setPrefix('');
-        const routingControl = useRef(null);
-
-        useMapEvent('click', (e) => {
-            console.log(e.latlng);
-            const marker = L.marker(e.latlng, { icon: myIcon }).addTo(map);
-            marker.bindPopup("Hello World!").openPopup();
+      const map = useMap();
+      map.removeControl(map.zoomControl);
+      map.attributionControl.setPrefix('');
+    
+      const locations = [
+        {lat: 33.7671923, lng: -84.40537119999999},
+        {lat: 33.79994, lng: -84.42485099999999},
+        {lat: 33.7749219, lng: -84.2929674},
+        {lat: 33.627911, lng: -84.4715296},
+        {lat: 33.78034239999999, lng: -84.410242},
+        {lat: 33.7485041, lng: -84.3365784},
+      ];
+    
+      useEffect(() => {
+        locations.forEach((loc) => {
+          const marker = L.marker([loc.lat, loc.lng], { icon: myIcon }).addTo(map);
+          marker.bindPopup("Hello World!").openPopup();
         });
-
-        return null;
+      }, [locations, map]);
+    
+      return null;
     }
 
     return (
