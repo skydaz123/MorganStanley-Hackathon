@@ -43,7 +43,8 @@ export default function Map() {
     useMapEvent('click', (e) => {
       console.log(e.latlng);
       const marker = L.marker(e.latlng,{ icon: myIcon }).addTo(map);
-      marker.bindPopup("Hello World!").openPopup();
+      //marker.bindPopup("Hello World!").openPopup();
+      marker.on('click', e => {console.log("yes")})
     });
 
     return null;

@@ -7,10 +7,11 @@ import SearchIcon from '@mui/icons-material/Search';
 
 export default function SearchBar() {
 
-    
-    function send(url) {
-        fetch(url)
-        .then((response) => console.log(response.json()))
+    const js = "";
+    async function send(url) {
+        let text = await fetch(url)
+        .then((response) => (response.json()))
+        console.log(text.results[0].geometry.location);
     }
     const address = '1600 Pennsylvania Avenue NW, Washington, DC 20500';
     const url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + encodeURIComponent(address) + "&key=AIzaSyCAI3WTDKH75l6S7XDVRLMV-BvAGtxMdM4";
@@ -21,6 +22,7 @@ export default function SearchBar() {
         if(event.key === 'Enter') {
             console.log("send message to google");
             send(url);
+            console.log();
         }
     }
     function handleSearch() {
