@@ -2,3 +2,6 @@
 /.idea/
 .vscode/*
 !.vscode/extensions.json
+server/account-key.json
+server/node_modules
+server/package-lock.json
