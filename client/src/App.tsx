@@ -7,6 +7,7 @@ import RootBoundary from "./boundaries/RootBoundary"
 const HeaderLayout = lazy(() => import("./layouts/SplashLayout"))
 const Home = lazy(() => import("./pages/Home"))
 const Login = lazy(() => import("./pages/Login"))
+const RoleSelection = lazy(() => import("./pages/RoleSelection"))
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -15,6 +16,7 @@ const router = createBrowserRouter(
                 <Route path="" element={<Home/>}/>
             </Route>
             <Route path="login" element={<Login/>}/>
+            <Route path="role-selection" element={<RoleSelection/>}/>
         </Route>
     )
 )
