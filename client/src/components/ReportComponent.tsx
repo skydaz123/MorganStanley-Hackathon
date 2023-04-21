@@ -3,25 +3,21 @@ import Box from '@mui/material/Box';
 import { useForm } from "react-hook-form";
 import {Button, Stack, Typography} from "@mui/material";
 import React from "react";
-import Divider from '@mui/material/Divider';
-import GoogleButton from 'react-google-button'
 
 
-export default function LoginComponent() {
-    const { control, handleSubmit } = useForm({
+export default function ReportComponent() {
+    const { control, handleSubmit    } = useForm({
         defaultValues: {
-            userName: "",
-            password: "",
+            perishReceived: "",
+            nonPerishReceived: "",
+            perishGiven: "",
+            nonPerishGiven: ""
         },
         mode: "all"
     })
-
     const submit = handleSubmit(values => {
         console.log(values)
     })
-
-    // MULTILINE IS FOR ADDING NOTES AND ROWS
-    // USE CTRL ALT L FOR REFORMAT
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap' }}>
             <Typography sx={{
@@ -30,11 +26,13 @@ export default function LoginComponent() {
                 textAlign: 'center',
                 fontFamily: 'Montserrat, sans-serif'
             }}>
-                Sign in
+                Report Form
             </Typography>
             <Stack spacing='20px'>
-                <FormField id="userName" control={control} placeholder="Email"/>
-                <FormField id="password" control={control} placeholder="Password" type="password"/>
+                <FormField id="perishReceived" control={control} label="Enter the amount of perishable food received (in lbs)" separateLabel/>
+                <FormField id="nonPerishReceived" control={control} label="Enter the amount of non-perishable food received (in lbs)" separateLabel/>
+                <FormField id="perishGiven" control={control} label="Enter the amount of perishable food donated" separateLabel/>
+                <FormField id="nonPerishGiven" control={control} label="Enter the amount of non-perishable food donated" separateLabel/>
                 <Button variant="outlined" onClick={submit} sx={{
                     border: '3px solid #EC701B !important',
                     '&:hover': {
@@ -47,22 +45,9 @@ export default function LoginComponent() {
                     fontFamily: 'Montserrat, sans-serif',
                     fontWeight: '650'
                 }}>
-                    Login
+                    Submit Report
                 </Button>
             </Stack>
-            <Typography sx={{
-                fontFamily: 'Montserrat',
-                color: '#EC701B',
-                fontSize: 10,
-                textAlign: 'center',
-                marginBottom: '2px'
-            }}>
-                Don't have an account? <a href="">Sign up!</a>
-            </Typography>
-            <Divider sx={{ borderColor: '#EC701B', marginBottom: '8px', borderWidth:'0.5px' }}/>
-            <GoogleButton
-                onClick={() => { console.log('Google button clicked') }}
-            />
         </Box>
     )
 }
