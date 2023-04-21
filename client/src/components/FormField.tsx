@@ -53,6 +53,19 @@ export default function FormField<T extends FieldValues>({
                 inputRef={ref}
                 error={!!error}
                 helperText={error?.message}
+                sx={{
+                    input: {
+                        '::placeholder': {color: 'white'},
+                        color: 'white !important',
+                        background: '#FF9600cc',
+                        transition: "all ease-in-out 0.25s\n",
+                        fontFamily: 'Montserrat',
+                        "&:focus": {
+                            background: '#F46E21'
+                        },
+                        borderRadius: 1,
+                    }
+                }}
             >{children}</TextField>
         </Stack>
     );
