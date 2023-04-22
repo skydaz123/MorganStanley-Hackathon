@@ -4,7 +4,7 @@ import logo from "../../images/acfb-logo.png"
 export default function BigLoader() {
     return (
         <Box sx={{
-            m: "32px",
+            m: "32px auto",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",

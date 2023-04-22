@@ -13,11 +13,11 @@ export default function PartnerLayout() {
             <DrawerProvider>
                 <CustomDrawer/>
             </DrawerProvider>
-            <Box component="main" sx={{ flexGrow: 1, p: "32px" }}>
-                <Suspense fallback={<BigLoader/>}>
+            <Suspense fallback={<BigLoader/>}>
+                <Box component="main" sx={{ flexGrow: 1, p: "32px" }}>
                     <Outlet/>
-                </Suspense>
-            </Box>
+                </Box>
+            </Suspense>
         </Box>
     )
 }
