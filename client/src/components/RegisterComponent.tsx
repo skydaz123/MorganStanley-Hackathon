@@ -28,6 +28,11 @@ export default function RegisterComponent() {
     })
 
     const submit = handleSubmit(values => {
+        //Check that password and confirm password match
+        if(values.password !== values.confirmPassword){
+            return;
+        }
+
         const auth = getAuth();
         createUserWithEmailAndPassword(auth, values.email, values.password)
             .then((userCredential) => {

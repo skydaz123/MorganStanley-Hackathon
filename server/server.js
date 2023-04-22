@@ -68,6 +68,10 @@ app.get('/firebase', (req, res) => {
 app.use('/firebase', user)
 app.use('/firebase', map)
 
+app.post('/addUser', async(req, res) => {
+    
+})
+
 app.listen(process.env.PORT || 8080, () => {
     console.log(`Example app listening on port ${process.env.PORT || 8080}`)
 })
