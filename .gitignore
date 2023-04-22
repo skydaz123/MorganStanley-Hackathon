@@ -5,3 +5,4 @@
 server/account-key.json
 server/node_modules
 server/package-lock.json
+server/.env*

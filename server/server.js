@@ -10,12 +10,20 @@ const cors = require('cors')
 const port = 8000;
 
 const serviceAccount = require('./account-key.json');
+dotenv.config()
+// Various other path / Functionality
+const user = require('./firebase/users/app')
+const map = require('./firebase/map/app')
 
 initializeApp({
   credential: cert(serviceAccount)
 });
 
 const db = getFirestore();
+
+app.use(cors({
+    origin: '*'
+}));
 
 const data = {
     name: 'Los Angeles',
@@ -45,12 +53,13 @@ app.post('/test', async (req, res) => {
     // capital: true
     // }, { merge: true });
     res.status(200).json();
-
-
 });
 
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+app.use('/firebase', user)
+app.use('/firebase', map)
+
+app.listen(process.env.PORT || 8080, () => {
+    console.log(`Example app listening on port ${process.env.PORT || 8080}`)
 })
    
 
