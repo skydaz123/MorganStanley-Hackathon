@@ -1,7 +1,10 @@
 import { Box, Typography } from "@mui/material"
-import back from "../../../../images/wavy-background.png"
+import back from "../../../images/wavy-background.png"
 
-export default function Background() {
+type Props = {
+    reverse?: boolean
+}
+export default function Background({ reverse }: Props) {
     return (
         <>
             <Box sx={{
@@ -11,7 +14,13 @@ export default function Background() {
                 right: "32px",
                 overflow: "hidden",
                 zIndex: -1,
-                borderBottomRightRadius: "24px",
+                ...(
+                    reverse ? {
+                        borderBottomLeftRadius: "24px",
+                    } : {
+                        borderBottomRightRadius: "24px",
+                    }
+                )
             }}>
                 <img src={back} width="100%"/>
             </Box>

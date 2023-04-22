@@ -1,4 +1,4 @@
-import logo from "../../../../images/acfb-logo.png"
+import logo from "../../../images/acfb-logo.png"
 import { Box, Typography } from "@mui/material"
 
 export default function Logo() {
@@ -18,7 +18,7 @@ export default function Logo() {
                 textAlign: "center",
                 color: "#EC701B",
                 paddingBottom: "48px",
-                "-webkitTextStroke": "white 1px",
+                WebkitTextStroke: "white 1px",
                 fontWeight: "bold",
             }}>Placeholder</Typography>
         </Box>

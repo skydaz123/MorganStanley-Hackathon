@@ -12,7 +12,7 @@ export default function RedWord({ children }: Props) {
             color: "white",
             strokeLinecap: "butt",
             strokeDasharray: 0,
-            "-webkitTextStroke": "#EC701B 5px",
+            WebkitTextStroke: "#EC701B 5px",
         }}>
             {children}
         </Typography>
