@@ -25,7 +25,7 @@ export default function SearchBar() {
             //do not send request if input is empty or has only space
             if(searchQuery !== '' && searchQuery !== ' ') {
                 console.log("send message to google")
-                trigger(address)
+                trigger(searchQuery);
                 console.log(searchQuery);
             }
         }
@@ -54,7 +54,7 @@ export default function SearchBar() {
             console.error("No data")
             return
         }
-        //console.log("Got", data.results[0].geometry.location)
+        console.log("Got", data.results[0].geometry.location)
         dispatch(updateCenter({lat: data.results[0].geometry.location.lat, lng: data.results[0].geometry.location.lng}))
         
     }, [isFetching, data, error, isError, isUninitialized])
