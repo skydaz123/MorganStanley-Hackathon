@@ -3,6 +3,7 @@ import store from "../redux/store"
 import { Outlet } from "react-router-dom"
 import { Suspense } from "react"
 import BigLoader from "../loaders/BigLoader"
+import WindowLoader from "../loaders/WindowLoader"
 
 export default function RootLayout() {
     return (
@@ -11,6 +12,7 @@ export default function RootLayout() {
             <Suspense fallback={<BigLoader/>}>
                 <Outlet/>
             </Suspense>
+            <WindowLoader/>
         </Provider>
     )
 }

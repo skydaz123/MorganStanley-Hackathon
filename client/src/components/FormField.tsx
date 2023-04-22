@@ -1,6 +1,6 @@
 import { Stack, TextField, TextFieldProps, Typography } from "@mui/material"
 import { Control, FieldValues, Path, useController } from "react-hook-form"
-import { ReactNode } from "react"
+import { ReactNode, useMemo } from "react"
 
 type Props<T extends FieldValues> = {
     control: Control<T>
@@ -33,17 +33,23 @@ export default function FormField<T extends FieldValues>({
         name: id,
     })
 
-    const numRows = rows !== undefined && typeof rows === "number" ? rows : 1
+    const numRows = useMemo(() => {
+        const $ = Number(rows)
+        if (isNaN($))
+            return 1
+        return Math.max($, 1)
+    }, [rows])
+
     return (
         <Stack spacing="8px">
             {
                 !!separateLabel &&
-                <Typography variant="body1" fontWeight="normal">{label} {required && "*"}</Typography>
+                <Typography>{label} {required && "*"}</Typography>
             }
             <TextField
-                select={!!select}
-                required={!!required}
-                multiline={!!multiline}
+                select={Boolean(select)}
+                required={Boolean(required)}
+                multiline={Boolean(multiline)}
                 rows={numRows}
                 value={value ?? ""}
                 type={type}
@@ -51,14 +57,14 @@ export default function FormField<T extends FieldValues>({
                 {...(!separateLabel ? { label } : {})}
                 placeholder={placeholder}
                 inputRef={ref}
-                error={!!error}
+                error={Boolean(error)}
                 helperText={error?.message}
                 sx={{
                     input: {
-                        '::placeholder': {color: 'white'},
+                        '::placeholder': { color: 'white' },
                         color: 'white !important',
                         background: '#FF9600cc',
-                        transition: "all ease-in-out 0.25s\n",
+                        transition: "all ease-in-out 0.25s",
                         fontFamily: 'Montserrat',
                         "&:focus": {
                             background: '#F46E21'
@@ -68,5 +74,5 @@ export default function FormField<T extends FieldValues>({
                 }}
             >{children}</TextField>
         </Stack>
-    );
+    )
 }
