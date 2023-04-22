@@ -167,26 +167,39 @@ export default function Map() {
          matrix.push(row);
        }
        setDistanceMatrix(matrix);
-
-
      };
     
-    
-    
-   useEffect(() => {
-       calculateDistances();
-      
-   }, []);
 
     
       useEffect(() => {
         console.log("useeffect");
+        calculateDistances();
         locations.forEach((loc) => {
           const marker = L.marker([loc.lat, loc.lng], { icon: myIcon }).addTo(map);
-          marker.bindPopup("Hello World!").openPopup();
+          //marker.bindPopup("Hello World!").openPopup();
           // Attach click event handler for marker to open modal
           marker.on('click', () => handleOpenModal(loc));
+          markers.push(marker);
         });
+
+        map.pm.addControls({
+          position: 'topright',
+          drawPolygon: true,
+          drawText : false,
+          drawCircle: false,
+          drawCircleMarker: false,
+          drawMarker: false,
+          drawPolyline: false,
+          drawRectangle: false,
+          editMode: false,
+          dragMode: false,
+          cutPolygon: false,
+          removalMode: false,
+          rotateMode: false,
+          merge: false,
+          delete : false
+        });
+
       });
 
       map.on('pm:create', (e) => {
