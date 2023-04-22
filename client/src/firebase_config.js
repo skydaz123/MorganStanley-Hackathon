@@ -10,8 +10,8 @@ import axios from "axios";
 let app;
 let analytics;
 
-// axios.get('/firebase').then((res) => {
-//   const firebaseConfig = res.data
-//   app = initializeApp(firebaseConfig)
-//   analytics = getAnalytics(app);
-// })
+axios.get('/firebase').then((res) => {
+  const firebaseConfig = res.data
+  app = initializeApp(firebaseConfig)
+  analytics = getAnalytics(app);
+})
