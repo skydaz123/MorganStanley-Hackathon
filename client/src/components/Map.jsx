@@ -19,6 +19,7 @@ import { Link } from 'react-router-dom';
 import SearchBar from './SearchBar';
 
 
+
 const myIcon = new Icon({
     iconUrl: markerIcon,
     iconSize: [25, 41],

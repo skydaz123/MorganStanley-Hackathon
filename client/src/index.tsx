@@ -8,7 +8,13 @@ const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 )
 root.render(
+<<<<<<< HEAD
     <App/>
+=======
+
+        <App/>
+    
+>>>>>>> e6f04b5c780a9464f4bc6f0bb1b854df6390fa2b
 )
 
 // If you want to start measuring performance in your app, pass a function
