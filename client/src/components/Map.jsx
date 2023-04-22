@@ -5,14 +5,14 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import { IconButton, Typography } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import L, { Icon } from 'leaflet';
-// import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
-// import 'leaflet-routing-machine/dist/leaflet-routing-machine.js';
+import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
+import 'leaflet-routing-machine/dist/leaflet-routing-machine.js';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import 'leaflet/dist/leaflet.css';
 import '@geoman-io/leaflet-geoman-free';  
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';  
 import * as turf from '@turf/turf';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import { Link } from 'react-router-dom';
@@ -52,6 +52,75 @@ export default function Map() {
         {lat: 33.78034239999999, lng: -84.410242},
         {lat: 33.7485041, lng: -84.3365784},
       ];
+
+       //has all of the distances from point a to all other points. Each row is a unique location, and its column is the endpoint.
+   const [distanceMatrix, setDistanceMatrix] = useState([]);
+
+
+   const calculateDistances = async () => {
+       const matrix = [];
+       const controls = {};
+    
+       const removeControl = (origin, destination) => {
+           const key = `${origin.lat},${origin.lng}_${destination.lat},${destination.lng}`;
+           const control = controls[key];
+           if (control) {
+             control.remove();
+             delete controls[key];
+           }
+         };
+    
+       for (const origin of locations) {
+         const row = [];
+         for (const destination of locations) {
+           if (origin === destination) {
+             row.push(0);
+             continue;
+           }
+    
+           const key = `${origin.lat},${origin.lng}_${destination.lat},${destination.lng}`;
+           const control = L.Routing.control({
+               waypoints: [
+                 L.latLng(origin.lat, origin.lng),
+                 L.latLng(destination.lat, destination.lng),
+               ],
+               lineOptions: {
+                 styles: [{ color: 'transparent' }],
+               },
+               createMarker: () => null,
+               addWaypoints: false,
+               routeWhileDragging: false,
+               showAlternatives: false,
+               fitSelectedRoutes: false,
+             }).addTo(map);
+            
+             controls[key] = control;
+            
+             const promise = new Promise((resolve) => {
+               control.on('routesfound', (e) => {
+                 const distance = e.routes[0].summary.totalDistance;
+                 resolve(distance);
+               });
+             });
+            
+             const distance = await promise;
+           row.push(distance);
+           removeControl(origin, destination);
+         }
+         matrix.push(row);
+       }
+       setDistanceMatrix(matrix);
+
+
+     };
+    
+    
+    
+   useEffect(() => {
+       calculateDistances();
+      
+   }, []);
+
     
       useEffect(() => {
         console.log("useeffect");
