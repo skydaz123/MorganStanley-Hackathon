@@ -17,7 +17,7 @@ import React, { useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import { Link } from 'react-router-dom';
 import SearchBar from './SearchBar';
-
+import MapDrawer from './MapDrawer';
 
 
 const myIcon = new Icon({
@@ -121,6 +121,7 @@ export default function Map() {
                     attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
                 />
                 <MapC/>
+                
             </MapContainer>
             <div style={{ position: 'absolute', bottom: '20px', right: '20px', zIndex: '1000' }}>
                 <Stack spacing={2}>
