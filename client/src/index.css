@@ -11,3 +11,65 @@ code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.quarter-circle {
+    width: 200px;
+    height: 200px;
+    background-color: white;
+    border-top-left-radius: 100%;
+    border: 2px solid orange;
+    border-bottom: 0;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+
+}
+
+.square-left1 {
+    width: 150px;
+    height: 150px;
+    border: 2px solid #EC701B;
+    position: absolute;
+    left: 4%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.square-left2 {
+    width: 150px;
+    height: 150px;
+    border: 2px solid #EC701B;
+    position: absolute;
+    left: 10%;
+    top: 60%;
+    transform: translate(-50%, -50%);
+}
+
+.square-right1 {
+    width: 160px;
+    height: 150px;
+    border: 2px solid #EC701B;
+    position: absolute;
+    left: 80%;
+    top: 22%;
+    transform: translate(-50%, -50%);
+}
+
+.square-right2 {
+    width: 160px;
+    height: 150px;
+    border: 2px solid #EC701B;
+    position: absolute;
+    left: 83%;
+    top: 31%;
+    transform: translate(-50%, -50%);
+}
+
+/*width: 0;*/
+/*height: 0;*/
+/*border-top-left-radius: 100%;*/
+/*background-color: white;*/
+/*border: 3px solid orange;*/
+/*position: absolute;*/
+/*bottom: 0;*/
+/*right: 0;*/
