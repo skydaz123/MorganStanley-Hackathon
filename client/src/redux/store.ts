@@ -1,14 +1,19 @@
 import { configureStore } from "@reduxjs/toolkit"
-import rootApi from "./apis/rootApi"
+import localApi from "./apis/localApi"
 import demoSlice from "./slices/demoSlice"
+import mapsApi from "./apis/mapsApi"
+import mapSlice from "./slices/mapSlice"
 
 const store = configureStore({
     reducer: {
         [demoSlice.name]: demoSlice.reducer,
-        [rootApi.reducerPath]: rootApi.reducer,
+        [mapSlice.name]: mapSlice.reducer,
+        [localApi.reducerPath]: localApi.reducer,
+        [mapsApi.reducerPath]: mapsApi.reducer,
     },
     middleware: getDM => getDM().concat(
-        rootApi.middleware,
+        localApi.middleware,
+        mapsApi.middleware,
     )
 })
 
@@ -16,5 +21,6 @@ type RootState = ReturnType<typeof store.getState>
 
 // INSERT slice selectors here
 export const getDemoSlice = (root: RootState) => root[demoSlice.name]
+export const getMapSlice = (root: RootState) => root[mapSlice.name]
 
 export default store

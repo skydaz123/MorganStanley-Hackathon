@@ -93,9 +93,6 @@ export default function RegisterComponent() {
                 Already have an account? <a href="">Sign in!</a>
             </Typography>
             <Divider sx={{ borderColor: '#EC701B', marginBottom: '8px', borderWidth:'0.5px' }}/>
-            <GoogleButton
-                onClick={() => { console.log('Google button clicked') }}
-            />
         </Box>
     )
 }
