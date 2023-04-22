@@ -1,5 +1,5 @@
 import { Box, ButtonProps, Paper, Typography } from "@mui/material"
-import CustomButton from "./CustomButton"
+import CustomButton from "../../components/CustomButton"
 
 type Props = {
     name: string

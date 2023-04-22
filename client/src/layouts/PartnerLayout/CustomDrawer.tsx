@@ -1,7 +1,7 @@
 import List from "@mui/material/List"
 import LogoTab from "./LogoTab"
 import Tab from "./Tab"
-import { BarChart, Person, Send, Settings, Timeline } from "@mui/icons-material"
+import { BarChart, Person, Send, Timeline } from "@mui/icons-material"
 import Box from "@mui/material/Box"
 import Divider from "@mui/material/Divider"
 import * as React from "react"
@@ -62,7 +62,6 @@ export default function CustomDrawer() {
                 <Tab text="Statistics" icon={<BarChart/>} link="stats"/>
                 <Tab text="History" icon={<Timeline/>} link="history"/>
                 <Tab text="Profile" icon={<Person/>} link="profile"/>
-                <Tab text="Setting" icon={<Settings/>} link="setting"/>
             </List>
             <Box flex={1}/>
             <Divider/>

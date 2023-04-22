@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { Button, Stack, Typography, Box } from "@mui/material";
+import useHideSlidingWindowOnLoad from "../../hooks/useHideSlidingWindowOnLoad"
 
 const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 90 },
@@ -40,7 +41,8 @@ const rows = [
     { id: 2, name: 'Barrow', wastePerPound: 2, roundTrip: '10 miles' },
 ];
 
-export default function DataGridDemo() {
+export default function Stats() {
+    useHideSlidingWindowOnLoad()
 
     return (
         <Box>
