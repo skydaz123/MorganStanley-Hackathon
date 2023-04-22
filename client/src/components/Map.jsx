@@ -9,6 +9,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  Button,
 } from '@mui/material'; // Import Modal here
 import Stack from '@mui/material/Stack';
 import L, { Icon } from 'leaflet';
@@ -111,13 +112,13 @@ export default function Map() {
       ];
 
        //has all of the distances from point a to all other points. Each row is a unique location, and its column is the endpoint.
-   const [distanceMatrix, setDistanceMatrix] = useState([]);
+   var edges = [];
 
 
-   const calculateDistances = async () => {
+    const calculateDistances = async () => {
        const matrix = [];
        const controls = {};
-    
+      
        const removeControl = (origin, destination) => {
            const key = `${origin.lat},${origin.lng}_${destination.lat},${destination.lng}`;
            const control = controls[key];
@@ -166,23 +167,16 @@ export default function Map() {
          }
          matrix.push(row);
        }
-       setDistanceMatrix(matrix);
-     };
-    
+       return matrix;
+    };
 
-    
-      useEffect(() => {
-        console.log("useeffect");
-        calculateDistances();
-        locations.forEach((loc) => {
-          const marker = L.marker([loc.lat, loc.lng], { icon: myIcon }).addTo(map);
-          //marker.bindPopup("Hello World!").openPopup();
-          // Attach click event handler for marker to open modal
-          marker.on('click', () => handleOpenModal(loc));
-          markers.push(marker);
-        });
+    locations.forEach((loc) => {
+      const marker = L.marker([loc.lat, loc.lng], { icon: myIcon }).addTo(map);
+      marker.on('click', () => handleOpenModal(loc));
+      markers.push(marker);
+    });
 
-        map.pm.addControls({
+      map.pm.addControls({
           position: 'topright',
           drawPolygon: true,
           drawText : false,
@@ -198,8 +192,6 @@ export default function Map() {
           rotateMode: false,
           merge: false,
           delete : false
-        });
-
       });
 
       map.on('pm:create', (e) => {
@@ -216,10 +208,21 @@ export default function Map() {
         });
         map.removeLayer(layer);
       });
-      return null;
+
+      async function test() {
+        console.log("clccked me")
+        let result = await calculateDistances();
+        console.log(result);
+      }
+
+      return (
+        <div>
+          <Button onClick={test}>Click me</Button>
+        </div>
+      );;
     }
     
-    
+
     function handleZoomIn() {
       console.log("Zoom in pressed");
       maps.zoomIn();
@@ -265,7 +268,7 @@ export default function Map() {
         ) : (
           <div></div> // Fallback empty element
         )}
-      </Modal>
+          </Modal>
             <div style={{ display: 'flex', justifyContent: 'start' }}>
                 <Typography style={{ position: 'absolute', zIndex: '1000', fontSize: '40px', color: 'Red', marginTop: '1.25%'  }}>
                     <Link to='/'
@@ -296,7 +299,6 @@ export default function Map() {
                   attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
                 />
                 <MapC/>
-                
             </MapContainer>
             <div style={{ position: 'absolute', bottom: '20px', right: '20px', zIndex: '1000' }}>
                 <Stack spacing={2}>
