@@ -24,6 +24,8 @@
     "leaflet-draw": "^1.0.4",
     "leaflet-pip": "^1.1.0",
     "leaflet-routing-machine": "^3.2.12",
+    "leaflet-textpath": "^1.2.3",
+    "leaflet.polyline.snakeanim": "^0.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-google-button": "^0.7.2",
