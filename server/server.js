@@ -21,9 +21,7 @@ initializeApp({
 
 const db = getFirestore();
 
-app.use(cors({
-    origin: '*'
-}));
+app.use(cors());
 
 const data = {
     name: 'Los Angeles',
@@ -54,6 +52,18 @@ app.post('/test', async (req, res) => {
     // }, { merge: true });
     res.status(200).json();
 });
+
+app.get('/firebase', (req, res) => {
+  res.send({
+    apiKey: process.env.FIREBASE_APIKEY,
+    authDomain: process.env.FIREBASE_AUTH,
+    projectId: process.env.FIREBASE_PROJECT,
+    storageBucket: process.env.FIREBASE_STORAGE,
+    messagingSenderId: process.env.FIREBASE_MESSAGE,
+    appId: process.env.FIREBASE_APP,
+    measurementID: process.env.FIREBASE_MEASURE
+  })
+})
 
 app.use('/firebase', user)
 app.use('/firebase', map)

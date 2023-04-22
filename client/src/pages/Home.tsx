@@ -8,10 +8,10 @@ export default function Home() {
     return (
         <Box sx={{ display: 'flex' }}>
 
-            {/*<LoginComponent/>*/}
-            {/*<RegisterComponent/>*/}
-            {/*<ReportComponent/>*/}
-            <SignUp />
+            <LoginComponent/>
+            <RegisterComponent/>
+            <ReportComponent/>
+            {/*<SignUp />*/}
         </Box>
     )
 }

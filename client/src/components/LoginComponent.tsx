@@ -5,7 +5,7 @@ import {Button, Stack, Typography} from "@mui/material";
 import React from "react";
 import Divider from '@mui/material/Divider';
 import GoogleButton from 'react-google-button'
-
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 export default function LoginComponent() {
     const { control, handleSubmit } = useForm({
@@ -17,7 +17,20 @@ export default function LoginComponent() {
     })
 
     const submit = handleSubmit(values => {
-        console.log(values)
+        const auth = getAuth();
+        signInWithEmailAndPassword(auth, values.userName, values.password)
+            .then((userCredential) => {
+            // Signed in 
+            const user = userCredential.user;
+            console.log(user);
+            // ...
+            })
+            .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(error, errorMessage);
+            // ..
+        });
     })
 
     // MULTILINE IS FOR ADDING NOTES AND ROWS
@@ -60,9 +73,6 @@ export default function LoginComponent() {
                 Don't have an account? <a href="">Sign up!</a>
             </Typography>
             <Divider sx={{ borderColor: '#EC701B', marginBottom: '8px', borderWidth:'0.5px' }}/>
-            <GoogleButton
-                onClick={() => { console.log('Google button clicked') }}
-            />
         </Box>
     )
 }
