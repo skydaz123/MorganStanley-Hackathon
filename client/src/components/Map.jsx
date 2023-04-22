@@ -91,7 +91,7 @@ export default function Map() {
     return (
         <div>
             <div style={{ display: 'flex', justifyContent: 'start' }}>
-                <Typography style={{ position: 'absolute', zIndex: '1000', fontSize: '40px', color: 'Red' }}>
+                <Typography style={{ position: 'absolute', zIndex: '1000', fontSize: '40px', color: 'Red', marginTop: '1.25%'  }}>
                     <Link to='/'
                           style={{ color: 'inherit', textDecoration: 'none' }}
                     >
@@ -99,16 +99,15 @@ export default function Map() {
                     </Link>
                 </Typography>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <div style={{ position: 'absolute', zIndex: '1000' }}>
+            <div style={{ display: 'flex', justifyContent: 'center'}}>
+                <div style={{ position: 'absolute', zIndex: '1000', marginTop: '2.5%' }}>
                     <SearchBar/>
                 </div>
             </div>
             <div style={{ display: 'flex', justifyContent: 'end' }}>
-                <IconButton style={{ position: 'absolute', zIndex: '1000' }}
-                            onClick={handleClick}>
-                    <MenuIcon sx={{ color: 'orange', fontSize: 50 }}/>
-                </IconButton>
+              <div style = {{position: 'absolute', zIndex: '1000' }}> 
+                <MapDrawer/>
+              </div>
             </div>
             <MapContainer
                 style={{ height: '100vh', width: '100wh', position: 'relative' }}
