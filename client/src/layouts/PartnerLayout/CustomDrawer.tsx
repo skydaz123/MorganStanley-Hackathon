@@ -48,9 +48,6 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
             ...closedMixin(theme),
             '& .MuiDrawer-paper': closedMixin(theme),
         }),
-        "& *": {
-            borderColor: "#F46E21"
-        },
     }),
 )
 
@@ -68,7 +65,7 @@ export default function CustomDrawer() {
                 <Tab text="Setting" icon={<Settings/>} link="setting"/>
             </List>
             <Box flex={1}/>
-            <Divider sx={{ borderColor: "#F46E21", }}/>
+            <Divider/>
             <ControllerTab/>
         </Drawer>
     )
