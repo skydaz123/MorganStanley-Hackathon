@@ -6,9 +6,12 @@ import Paper from '@mui/material/Paper';
 import { useEffect } from "react";
 import * as React from 'react';
 import { useLazyGetAddressInfoQuery } from "../redux/apis/mapsApi/geocodeApi"
+import { updateCenter } from '../redux/slices/mapSlice';
+import { useDispatch } from "react-redux"
 
-const address = '1600 Pennsylvania Avenue NW, Washington, DC 20500';
+const address = '1560 Memorial Dr SE, Atlanta, GA 30317';
 export default function SearchBar() {
+    const dispatch = useDispatch();
     const [trigger, { isFetching, data, error, isError, isUninitialized }] = useLazyGetAddressInfoQuery()
 
     const handleEnter = (event) => {
@@ -42,7 +45,9 @@ export default function SearchBar() {
             console.error("No data")
             return
         }
-        console.log("Got", data)
+        //console.log("Got", data.results[0].geometry.location)
+        dispatch(updateCenter({lat: data.results[0].geometry.location.lat, lng: data.results[0].geometry.location.lng}))
+        
     }, [isFetching, data, error, isError, isUninitialized])
 
     return (

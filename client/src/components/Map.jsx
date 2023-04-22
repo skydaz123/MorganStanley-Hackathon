@@ -17,7 +17,6 @@ import React, { useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import { Link } from 'react-router-dom';
 import SearchBar from './SearchBar';
-import { returnStatement } from '@babel/types';
 
 
 const myIcon = new Icon({
@@ -25,7 +24,6 @@ const myIcon = new Icon({
     iconSize: [25, 41],
     iconAnchor: [12, 41],
 });
-
 
 const southWest = L.latLng(-90, -180);
 const northEast = L.latLng(90, 180);
@@ -35,9 +33,11 @@ function handleClick() {
     console.log("pressed")
 }
 
+let maps = null;
 export default function Map() {
     function MapC() {
       const map = useMap();
+      maps = map;
       map.removeControl(map.zoomControl);
       map.attributionControl.setPrefix('');
       var markers = [];
@@ -56,23 +56,6 @@ export default function Map() {
         locations.forEach((loc) => {
           const marker = L.marker([loc.lat, loc.lng], { icon: myIcon }).addTo(map);
           marker.bindPopup("Hello World!").openPopup();
-          markers.push(marker);
-        });
-
-        map.pm.addControls({
-          position: 'topright',
-          drawPolygon: true,
-          drawText : false,
-          drawCircle: false,
-          drawCircleMarker: false,
-          drawMarker: false,
-          drawPolyline: false,
-          drawRectangle: false,
-          editMode: false,
-          dragMode: false,
-          cutPolygon: false,
-          removalMode: false,
-          rotateMode: false,
         });
       });
 
@@ -92,7 +75,17 @@ export default function Map() {
       });
       return null;
     }
+    
+    
+    function handleZoomIn() {
+      console.log("Zoom in pressed");
+      maps.zoomIn();
+    }
 
+    function handleZoomOut() {
+      console.log("Zoom out pressed")
+      maps.zoomOut();
+    }
     return (
         <div>
             <div style={{ display: 'flex', justifyContent: 'start' }}>
@@ -133,11 +126,11 @@ export default function Map() {
                                 sx={{ backgroundColor: 'white', borderRadius: 3 }}>
                         <GpsFixedIcon/>
                     </IconButton>
-                    <IconButton onClick={() => console.log('Add clicked')}
+                    <IconButton onClick={() => handleZoomIn()}
                                 sx={{ backgroundColor: 'white', borderRadius: 3 }}>
                         <AddIcon/>
                     </IconButton>
-                    <IconButton onClick={() => console.log('Remove clicked')}
+                    <IconButton onClick={() => handleZoomOut()}
                                 sx={{ backgroundColor: 'white', borderRadius: 3 }}>
                         <RemoveIcon/>
                     </IconButton>
