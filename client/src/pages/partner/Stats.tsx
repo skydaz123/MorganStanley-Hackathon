@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import { Button, Stack, Typography, Box } from "@mui/material";
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { Box, Typography } from "@mui/material";
 import useHideSlidingWindowOnLoad from "../../hooks/useHideSlidingWindowOnLoad"
 
 const columns: GridColDef[] = [
@@ -45,7 +45,7 @@ export default function Stats() {
     useHideSlidingWindowOnLoad()
 
     return (
-        <Box>
+        <Box sx={{ paddingLeft: '32px' }}>
             <Typography sx={{
                 color: '#F46E21',
                 fontSize: '30px',
