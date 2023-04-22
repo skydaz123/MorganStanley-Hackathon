@@ -21,6 +21,7 @@
     "eslint": "8.22.0",
     "geoman": "^0.1.0-alpha.2",
     "leaflet": "^1.9.3",
+    "leaflet-geosearch": "^3.8.0",
     "leaflet-draw": "^1.0.4",
     "leaflet-pip": "^1.1.0",
     "leaflet-routing-machine": "^3.2.12",
