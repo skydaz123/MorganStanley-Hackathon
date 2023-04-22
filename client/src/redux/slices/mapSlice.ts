@@ -21,7 +21,7 @@ export const mapSlice = createSlice({
                 state.center.lng = lng
             if (lat !== undefined)
                 state.center.lat = lat
-        }
+            }
     },
 })
 
