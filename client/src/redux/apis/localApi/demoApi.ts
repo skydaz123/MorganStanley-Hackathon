@@ -1,4 +1,4 @@
-import rootApi from "./rootApi"
+import rootApi from "./index"
 import { USER_TAG } from "./tagTypes"
 
 export const demoApi = rootApi.injectEndpoints({
