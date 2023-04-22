@@ -21,14 +21,17 @@ import '@geoman-io/leaflet-geoman-free';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';  
 import * as turf from '@turf/turf';
 import React, { useEffect, useRef, useState } from 'react';
-
-import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import { Link } from 'react-router-dom';
 import SearchBar from './SearchBar';
-import MapDrawer from './MapDrawer';
-import "../css/Map.css"
-import 'leaflet.polyline.snakeanim';
 
+//drawer for hamburger on side
+import MapDrawer from './MapDrawer';
+//hide 
+import "../css/Map.css"
+
+//route draw api
+import 'leaflet.polyline.snakeanim';
+//routing api
 require('leaflet-routing-machine');
 
 
@@ -65,7 +68,7 @@ const locations = [
 ];
 
 export default function Map() {
-    const [check, setCheck] = useState(false);
+  const [check, setCheck] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
 
@@ -163,7 +166,7 @@ export default function Map() {
                routeWhileDragging: false,
                showAlternatives: false,
                fitSelectedRoutes: false,
-             }).addTo(map);
+             });
             
              controls[key] = control;
             
