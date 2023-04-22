@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import {Button, Stack, Typography} from "@mui/material";
 import React from "react";
 import Divider from '@mui/material/Divider';
-import GoogleButton from 'react-google-button'
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 
