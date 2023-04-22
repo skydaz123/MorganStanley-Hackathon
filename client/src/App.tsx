@@ -3,6 +3,7 @@ import { CircularProgress } from "@mui/material"
 import RootLayout from "./layouts/RootLayout"
 import { lazy } from "react"
 import RootBoundary from "./boundaries/RootBoundary"
+import "./firebase_config"
 
 const HeaderLayout = lazy(() => import("./layouts/SplashLayout"))
 const Home = lazy(() => import("./pages/Home"))
