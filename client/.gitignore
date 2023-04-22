@@ -27,3 +27,4 @@ yarn-error.log*
 /.idea/
 .vscode/*
 !.vscode/extensions.json
+package-lock.json
