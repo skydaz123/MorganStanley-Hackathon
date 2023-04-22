@@ -39,6 +39,7 @@ export default function Map() {
     function MapC() {
       const map = useMap();
       maps = map;
+      maps.flyTo([33.753746,-84.386330], 12)
       map.removeControl(map.zoomControl);
       map.attributionControl.setPrefix('');
       var markers = [];
@@ -90,7 +91,7 @@ export default function Map() {
     return (
         <div>
             <div style={{ display: 'flex', justifyContent: 'start' }}>
-                <Typography style={{ position: 'absolute', zIndex: '1000' }}>
+                <Typography style={{ position: 'absolute', zIndex: '1000', fontSize: '40px', color: 'Red' }}>
                     <Link to='/'
                           style={{ color: 'inherit', textDecoration: 'none' }}
                     >

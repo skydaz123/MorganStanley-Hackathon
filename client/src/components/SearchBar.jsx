@@ -15,15 +15,14 @@ export default function SearchBar() {
     const [trigger, { isFetching, data, error, isError, isUninitialized }] = useLazyGetAddressInfoQuery()
 
     const handleEnter = (event) => {
-        //Line below prevents refresh on enter
-        event.preventDefault()
-        console.log("GOT here")
+        console.log("Input caught")
 
-        if (event.key !== "Enter")
-            return
-
-        console.log("send message to google")
-        trigger(address)
+        if (event.key === "Enter"){
+            //Line below prevents refresh on enter
+            event.preventDefault()
+            console.log("send message to google")
+            trigger(address)
+        }
     }
 
     const handleSearch = () => {
