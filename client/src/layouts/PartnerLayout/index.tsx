@@ -5,19 +5,24 @@ import { Outlet } from "react-router-dom"
 import { DrawerProvider } from "../../contexts/DrawerProvider"
 import CustomDrawer from "./CustomDrawer"
 import BigLoader from "../../loaders/BigLoader"
+import "./index.module.css"
+import WindowLoader from "../../loaders/WindowLoader"
 
 export default function PartnerLayout() {
     return (
-        <Box sx={{ display: 'flex' }}>
-            <CssBaseline/>
-            <DrawerProvider>
-                <CustomDrawer/>
-            </DrawerProvider>
-            <Suspense fallback={<BigLoader/>}>
-                <Box component="main" sx={{ flexGrow: 1, p: "32px" }}>
-                    <Outlet/>
+        <>
+            <Box sx={{ display: 'flex' }}>
+                <CssBaseline/>
+                <DrawerProvider>
+                    <CustomDrawer/>
+                </DrawerProvider>
+                <Box component="main" sx={{ flexGrow: 1 }}>
+                    <Suspense fallback={<BigLoader/>}>
+                        <Outlet/>
+                    </Suspense>
                 </Box>
-            </Suspense>
-        </Box>
+            </Box>
+            <WindowLoader/>
+        </>
     )
 }

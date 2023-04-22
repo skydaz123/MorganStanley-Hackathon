@@ -5,8 +5,7 @@ import { lazy } from "react"
 import RootBoundary from "./boundaries/RootBoundary"
 import "./firebase_config"
 import partnerRoutes from "./routes/partner-routes"
-
-const HeaderLayout = lazy(() => import("./layouts/SplashLayout"))
+import Error404 from "./pages/Error404"
 
 const Home = lazy(() => import("./pages/Home"))
 const Login = lazy(() => import("./pages/Login"))
@@ -24,6 +23,8 @@ const router = createBrowserRouter(
             <Route path="map" element={<Map/>}/>
 
             {partnerRoutes}
+
+            <Route path="*" element={<Error404/>}/>
         </Route>
     )
 )

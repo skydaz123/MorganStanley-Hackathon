@@ -7,7 +7,6 @@ const Request = lazy(() => import("../pages/partner/Request"))
 const Stats = lazy(() => import("../pages/partner/Stats"))
 const History = lazy(() => import("../pages/partner/History"))
 const Profile = lazy(() => import("../pages/partner/Profile"))
-const Settings = lazy(() => import("../pages/partner/Settings"))
 
 const partnerRoutes = (
     <Route path="partner" element={<PartnerLayout/>} errorElement={<RootBoundary/>}>
@@ -16,7 +15,6 @@ const partnerRoutes = (
         <Route path="stats" element={<Stats/>}/>
         <Route path="history" element={<History/>}/>
         <Route path="profile" element={<Profile/>}/>
-        <Route path="setting" element={<Settings/>}/>
     </Route>
 )
 
