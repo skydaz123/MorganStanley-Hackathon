@@ -9,11 +9,15 @@ import L, { Icon } from 'leaflet';
 // import 'leaflet-routing-machine/dist/leaflet-routing-machine.js';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import 'leaflet/dist/leaflet.css';
+import '@geoman-io/leaflet-geoman-free';  
+import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';  
+import * as turf from '@turf/turf';
 import React, { useEffect, useRef } from 'react';
 
-import { MapContainer, TileLayer, useMap, useMapEvent, } from 'react-leaflet';
+import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import { Link } from 'react-router-dom';
 import SearchBar from './SearchBar';
+import { returnStatement } from '@babel/types';
 
 
 const myIcon = new Icon({
@@ -22,14 +26,6 @@ const myIcon = new Icon({
     iconAnchor: [12, 41],
 });
 
-let data = [
-  {lat: 33.7671923, lng: -84.40537119999999},
-  {lat: 33.79994, lng: -84.42485099999999},
-  {lat: 33.7749219, lng: -84.2929674},
-  {lat: 33.627911, lng: -84.4715296},
-  {lat: 33.78034239999999, lng: -84.410242},
-  {lat: 33.7485041, lng: -84.3365784}
-];
 
 const southWest = L.latLng(-90, -180);
 const northEast = L.latLng(90, 180);
@@ -44,7 +40,8 @@ export default function Map() {
       const map = useMap();
       map.removeControl(map.zoomControl);
       map.attributionControl.setPrefix('');
-    
+      var markers = [];
+
       const locations = [
         {lat: 33.7671923, lng: -84.40537119999999},
         {lat: 33.79994, lng: -84.42485099999999},
@@ -55,12 +52,44 @@ export default function Map() {
       ];
     
       useEffect(() => {
+        console.log("useeffect");
         locations.forEach((loc) => {
           const marker = L.marker([loc.lat, loc.lng], { icon: myIcon }).addTo(map);
           marker.bindPopup("Hello World!").openPopup();
+          markers.push(marker);
         });
-      }, [locations, map]);
-    
+
+        map.pm.addControls({
+          position: 'topright',
+          drawPolygon: true,
+          drawText : false,
+          drawCircle: false,
+          drawCircleMarker: false,
+          drawMarker: false,
+          drawPolyline: false,
+          drawRectangle: false,
+          editMode: false,
+          dragMode: false,
+          cutPolygon: false,
+          removalMode: false,
+          rotateMode: false,
+        });
+      });
+
+      map.on('pm:create', (e) => {
+        const layer = e.layer;
+        markers.forEach(mark => {
+          if (!(mark instanceof L.Marker)) 
+            return;
+          const latlng = mark.getLatLng();
+          const point = turf.point([latlng.lng, latlng.lat]);
+          const isInside = turf.booleanPointInPolygon(point, layer.toGeoJSON());
+          if (!isInside) {
+            map.removeLayer(mark);
+          }
+        });
+        map.removeLayer(layer);
+      });
       return null;
     }
 
