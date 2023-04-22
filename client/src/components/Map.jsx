@@ -1,6 +1,5 @@
 import AddIcon from '@mui/icons-material/Add';
 import GpsFixedIcon from '@mui/icons-material/GpsFixed';
-import MenuIcon from '@mui/icons-material/Menu';
 import RemoveIcon from '@mui/icons-material/Remove';
 import {
   IconButton,
@@ -22,9 +21,15 @@ import '@geoman-io/leaflet-geoman-free';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';  
 import * as turf from '@turf/turf';
 import React, { useEffect, useRef, useState } from 'react';
+
+import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import { Link } from 'react-router-dom';
 import SearchBar from './SearchBar';
 import MapDrawer from './MapDrawer';
+import "../css/Map.css"
+import 'leaflet.polyline.snakeanim';
+
+require('leaflet-routing-machine');
 
 
 const myIcon = new Icon({
@@ -47,12 +52,20 @@ const southWest = L.latLng(-90, -180);
 const northEast = L.latLng(90, 180);
 const bounds = L.latLngBounds(southWest, northEast);
 
-function handleClick() {
-    console.log("pressed")
-}
+var maps = null;
+var routing = null;
+var line = null;
+const locations = [
+  {lat: 33.7671923, lng: -84.40537119999999},
+  {lat: 33.79994, lng: -84.42485099999999},
+  {lat: 33.7749219, lng: -84.2929674},
+  {lat: 33.627911, lng: -84.4715296},
+  {lat: 33.78034239999999, lng: -84.410242},
+  {lat: 33.7485041, lng: -84.3365784},
+];
 
-let maps = null;
 export default function Map() {
+    const [check, setCheck] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
 
@@ -232,6 +245,51 @@ export default function Map() {
       console.log("Zoom out pressed")
       maps.zoomOut();
     }
+
+    function handleDraw() {
+      if(!check)
+      {
+        if(routing === null) { 
+          console.log("Drawing routes");
+          routing = L.Routing.control({
+            createMarker: function() { return null; } ,
+            
+            //showAlternatives: false,
+    
+            //Snap waypoints to nearest road and will not include walk up route
+            //waypointMode: 'snap',
+            useZoomParameter: false,
+            show:false,
+            routeWhileDragging: true,
+            lineOptions: {
+              styles: [{className: 'hide'}] // Adding animate class
+            },
+          }).addTo(maps);
+          routing.on('routeselected', function(e) {
+            line = L.polyline(e.route.coordinates, {snakingSpeed: 200});
+            line.addTo(maps).snakeIn();
+            line.setStyle({opacity: 1});
+            
+            // line.on('mouseover', function () {
+            //   this.setText('  ►  ', {repeat: true, attributes: {fill: 'red'}});
+            // });
+            // line.on('mouseout', function () {
+            //   this.setText(null);
+            // });
+          });
+          routing ._container.style.display = "none" // <--- remove control
+          routing.setWaypoints(locations);
+        }
+        else {
+          line.setStyle({opacity: 1});
+        }
+      }
+      else {
+        console.log("Removing Routes")
+        line.setStyle({opacity: 0});
+      }
+      setCheck(!check);
+    }
     return (
         <div>
           <Modal open={isModalOpen} onClose={handleCloseModal}>
@@ -302,7 +360,7 @@ export default function Map() {
             </MapContainer>
             <div style={{ position: 'absolute', bottom: '20px', right: '20px', zIndex: '1000' }}>
                 <Stack spacing={2}>
-                    <IconButton onClick={() => console.log('GPS clicked')}
+                    <IconButton onClick={() => handleDraw()}
                                 sx={{ backgroundColor: 'white', borderRadius: 3 }}>
                         <GpsFixedIcon/>
                     </IconButton>
