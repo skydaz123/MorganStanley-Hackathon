@@ -12,9 +12,20 @@ export default function LogoTab({ logo, name }: Props) {
     const { isOpen } = useDrawer()
 
     return (
-        <ListItem alignItems="flex-start" sx={{ marginBottom: "32px" }}>
+        <ListItem alignItems="flex-start" sx={{
+            transition: "margin-bottom 225ms",
+            marginBottom: isOpen ? "32px" : "16px",
+        }}>
             <ListItemAvatar>
-                <Avatar alt="some_company" src={logo}/>
+                <Avatar alt="some_company" src={logo} sx={{
+                    transition: "all 225ms",
+                    ...(
+                        !isOpen ? {
+                            width: "24px",
+                            height: "24px",
+                        } : {}
+                    )
+                }}/>
             </ListItemAvatar>
             <ListItemText primary={name} sx={{
                 opacity: isOpen ? 1 : 0,
