@@ -9,6 +9,7 @@ import { useLazyGetAddressInfoQuery } from "../../../redux/apis/mapsApi/geocodeA
 import { useAddUserMutation } from "../../../redux/apis/localApi/firebaseApi"
 import Role from "../../../enums/role"
 import { resetScenes } from "../../../redux/slices/signUpSlice"
+import { register } from "../../../redux/slices/authSlice"
 
 export default function SubmissionScene() {
     const navigate = useNavigate()
@@ -27,10 +28,10 @@ export default function SubmissionScene() {
             email,
             password,
 
-            city,
             zip,
-            street,
-            state,
+            lng,
+            lat,
+            address,
 
             role,
             providerName,
@@ -38,14 +39,8 @@ export default function SubmissionScene() {
             maxCapacity,
         } = data
 
-        const address = [street, city, state, zip].join(", ")
-
         async function operation() {
             const { user } = await createUserWithEmailAndPassword(auth, email, password)
-
-            const { results: [res] } = await lookup(address).unwrap()
-
-            const { geometry: { location: { lat, lng } } } = res
 
             const result = await addUser({
                 lat,
@@ -53,11 +48,20 @@ export default function SubmissionScene() {
                 zipcode: zip,
                 email,
                 name: providerName,
-                address,
                 role,
+                address,
                 maxCapacity,
                 phoneNumber,
             }).unwrap()
+
+            const token = await user.getIdToken(true)
+            dispatch(register({
+                id: user.uid,
+                name: result.name,
+                email: result.email,
+                role: result.role,
+                token,
+            }))
 
             switch (result.role) {
                 case Role.Partner:

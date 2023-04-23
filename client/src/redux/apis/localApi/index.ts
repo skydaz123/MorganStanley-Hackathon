@@ -1,12 +1,19 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react"
 import tagTypes from "./tagTypes"
+import { RootState } from "../../store"
 
 const localApi = createApi({
-    reducerPath: 'localApi',
+    reducerPath: "localApi",
     baseQuery: retry(fetchBaseQuery({
         baseUrl: `/`,
         prepareHeaders: (headers, api) => {
-            headers.set('Authorization', `insert-authentication-strategy-here`)
+            const { isLoggedIn, user } = (api.getState() as RootState).auth
+
+            if (isLoggedIn && user) {
+                const { token } = user
+                headers.set("Authorization", `Bearer ${token}`)
+            }
+
             return headers
         },
     }), { maxRetries: 0 }),

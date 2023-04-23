@@ -14,6 +14,7 @@ import { useDispatch } from "react-redux"
 import { register } from "../../redux/slices/authSlice"
 import { useLazyGetUserQuery } from "../../redux/apis/localApi/firebaseApi"
 import Role from "../../enums/role"
+import LoadingBar from "../../components/LoadingBar"
 
 const formSchema = z.object({
     email: z.string()
@@ -54,15 +55,15 @@ export default function LogIn() {
             const token = await user.getIdToken(true)
 
             const result = await getUser(token).unwrap()
-            console.log(result)
+            console.log("[LogIn]", result)
 
             // add result to dispatch
-            dispatch(register({
-                email,
-                id: user.uid,
-                name: user.displayName,
-                token,
-            }))
+            // dispatch(register({
+            //     email,
+            //     id: user.uid,
+            //     name: user.displayName,
+            //     token,
+            // }))
 
             // use result.role to navigate
             switch (result.role) {
@@ -91,11 +92,7 @@ export default function LogIn() {
             <Stack spacing="16px">
                 {
                     loading &&
-                    <LinearProgress sx={{
-                        "& .MuiLinearProgress-bar": {
-                            backgroundColor: "#EC701B"
-                        }
-                    }}/>
+                    <LoadingBar/>
                 }
                 <FormField id="email" control={control} placeholder="Email"/>
                 <FormField id="password" control={control} placeholder="Password" type="password"/>

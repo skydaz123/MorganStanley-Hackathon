@@ -1,16 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit'
+import Role from "../../enums/role"
 
 type User = {
     id: string
-    name: string | null
-    email: string
     token: string
+
+    name: string
+    email: string
+
+    role: Role
 }
 
 type AuthState = {
     isLoggedIn: boolean
     user?: User
-
 }
 
 const initialState: AuthState = {

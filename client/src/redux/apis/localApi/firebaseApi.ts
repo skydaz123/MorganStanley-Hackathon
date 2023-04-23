@@ -27,15 +27,19 @@ export const firebaseApi = rootApi.injectEndpoints({
                 method: "POST",
                 body
             }),
-
-            // providesTags: [USER_TAG],
-            // transformResponse: (data, meta, arg) => {
-            //     return data as {
-            //         id: number
-            //         name: string
-            //         created_at: string
-            //     }
-            // }
+            transformResponse: (data) => {
+                return data as {
+                    lat: number
+                    lng: number
+                    zipcode: string
+                    email: string
+                    name: string
+                    address: string
+                    role: Role
+                    maxCapacity: number
+                    phoneNumber: string
+                }
+            }
         }),
         getUser: build.query({
             query: (idToken: string) => `/firebase/getUser/?token=${idToken}`,
