@@ -1,39 +1,37 @@
-import * as React from 'react';
-import {Box, Button, Typography} from "@mui/material";
+import * as React from 'react'
+import { useEffect } from 'react'
+import { Box, styled, Typography } from "@mui/material"
 import useHideSlidingWindowOnLoad from "../../hooks/useHideSlidingWindowOnLoad"
-import logo from "../../images/acfb-logo.png";
-import backdrop from "../../images/random_hackathon_image.jpg";
-import Grid from '@mui/material/Grid';
-import { useDispatch, useSelector } from "react-redux"
-import { getAuthSlice } from "../../redux/store"
-import { useState, useEffect } from 'react'
-import { useLazyGetUserQuery } from "../../redux/apis/localApi/firebaseApi";
+import logo from "../../images/acfb-logo.png"
+import backdrop from "../../images/random_hackathon_image.jpg"
+import Grid from '@mui/material/Grid'
+import { useGetUserQuery } from "../../redux/apis/localApi/firebaseApi"
+import BigLoader from "../../loaders/BigLoader"
+
+const CustomText = styled(Typography)(() => ({
+    color: "#EC701B",
+    fontSize: 20,
+    fontFamily: "Montserrat, sans-serif",
+    fontWeight: "bold"
+}))
 
 export default function Profile() {
     useHideSlidingWindowOnLoad()
 
-    const [userDisplay, setUser] = useState();
-    const [getUser] = useLazyGetUserQuery()
-    const {isLoggedIn, user} = useSelector(getAuthSlice)
-    const getUserInfo = async(token: any) => {
-        const result = await getUser(token).unwrap();
-        setUser(result);
-    }
-    useEffect(() => {
-         // @ts-ignore
-        let token: any = user.token;
-        getUserInfo(token);
-    }, [])
+    const { data: user, isFetching, error, isError } = useGetUserQuery(undefined)
 
-    const textStyle = {
-        color: '#EC701B',
-        fontSize: 20,
-        fontFamily: 'Montserrat, sans-serif',
-        fontWeight: 'bold'
-    }
-    const handleClick = () => {
-        console.log("Hello world");
-    }
+    useEffect(() => {
+        if (!isError)
+            return
+        console.error(error)
+    }, [isError, error])
+
+    if (isFetching)
+        return <BigLoader/>
+
+    if (!user)
+        return <>No user found.</>
+
     return (
         <Box>
             <Typography sx={{
@@ -56,11 +54,10 @@ export default function Profile() {
             }}>
                 <img src={backdrop} style={{ width: '100%', height: '30%', zIndex: 1 }}/>
                 <div className="circle">
-                    <div style={{ position: 'absolute', left: '45%', top: '48%', transform:'translate(-50%, -50%)' }}>
+                    <div style={{ position: 'absolute', left: '45%', top: '48%', transform: 'translate(-50%, -50%)' }}>
                         <img src={logo} alt="Placeholder" style={{ width: '120%', height: 'auto' }}/>
                     </div>
                 </div>
-
                 <Grid container spacing={2} sx={{
                     position: 'absolute',
                     left: '5%',
@@ -68,28 +65,16 @@ export default function Profile() {
                     gap: 1
                 }}>
                     <Grid item xs={6}>
-                        <Typography sx={ textStyle }>Org. Address: {
-                        // @ts-ignore
-                        userDisplay.address
-                        }</Typography>
+                        <CustomText >Org. Address: {user.address}</CustomText>
                     </Grid>
                     <Grid item xs={6}>
-                        <Typography sx={ textStyle }>Org. Email:{
-                           // @ts-ignore
-                            userDisplay.email 
-                        }</Typography>
+                        <CustomText >Org. Email: {user.email}</CustomText>
                     </Grid>
                     <Grid item xs={6}>
-                        <Typography sx={ textStyle }>Phone Number: {
-                            // @ts-ignore
-                            userDisplay.phoneNumber
-                        } </Typography>
+                        <CustomText >Phone Number: {user.phoneNumber}</CustomText>
                     </Grid>
                     <Grid item xs={6}>
-                        <Typography sx={ textStyle }>Storage Capacity: {
-                            // @ts-ignore
-                            userDisplay.maxCapacity
-                        }</Typography>
+                        <CustomText >Storage Capacity: {user.maxCapacity}</CustomText>
                     </Grid>
                 </Grid>
             </Box>

@@ -1,4 +1,4 @@
-import { AppBar, Box, Button, IconButton, Toolbar, Typography } from "@mui/material"
+import { AppBar, Box, IconButton, Toolbar, Typography } from "@mui/material"
 import { Menu } from "@mui/icons-material"
 import { ReactNode } from "react"
 

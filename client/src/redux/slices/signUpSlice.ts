@@ -9,9 +9,9 @@ type SignUpState = {
         role: Role
         providerName: string
         phoneNumber: string
-        street: string
-        city: string
-        state: string
+        address: string
+        lat: number
+        lng: number
         zip: string
         maxCapacity: number
     }
@@ -25,9 +25,9 @@ const initialState: SignUpState = {
         role: Role.Unknown,
         providerName: "",
         phoneNumber: "",
-        street: "",
-        city: "",
-        state: "",
+        address: "",
+        lat: 0,
+        lng: 0,
         zip: "",
         maxCapacity: 0,
     }

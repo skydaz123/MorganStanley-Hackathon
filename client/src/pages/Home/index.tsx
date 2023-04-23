@@ -1,4 +1,4 @@
-import { Box, Button, Stack, Typography } from "@mui/material"
+import { Stack, Typography } from "@mui/material"
 import React, { useEffect, useState } from "react"
 import CustomButton from "../../components/CustomButton"
 import logo from "../../images/acfb-logo.png"
@@ -73,7 +73,7 @@ export default function Home() {
                 }}>Together</span>
             </Typography>
             <CustomButton variant="outlined" onClick={signIn}>
-                Sign In
+                Continue to Platform
             </CustomButton>
         </Wrapper>
     )

@@ -4,9 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { updateData } from "../../../redux/slices/signUpSlice"
 import FormField from "../../../components/FormField"
-import { Button, Stack } from "@mui/material"
-import React from "react"
+import { Stack } from "@mui/material"
+import React, { useState } from "react"
 import CustomButton from "../../../components/CustomButton"
+import { useLazyGetAddressInfoQuery } from "../../../redux/apis/mapsApi/geocodeApi"
+import LoadingBar from "../../../components/LoadingBar"
+import positiveNumberSchema from "../../../schemas/positiveNumberSchema"
 
 const formSchema = z.object({
     providerName: z.string()
@@ -21,10 +24,7 @@ const formSchema = z.object({
         .min(1, "State is required"),
     zip: z.string()
         .min(1, "Zip code is required"),
-    maxCapacity: z.number()
-        .positive("Amount needs to be positive")
-        .or(z.string().regex(/\d+/, "Invalid number").transform(Number))
-        .refine((n) => n >= 0),
+    maxCapacity: positiveNumberSchema,
 })
 
 type Props = {
@@ -32,7 +32,11 @@ type Props = {
 }
 export default function AdditionalScene({ nextPage }: Props) {
     const dispatch = useDispatch()
-    const { control, handleSubmit } = useForm({
+
+    const [lookup] = useLazyGetAddressInfoQuery()
+    const [loading, setLoading] = useState(false)
+
+    const { control, handleSubmit, setError } = useForm({
         defaultValues: {
             providerName: "",
             phoneNumber: "",
@@ -49,17 +53,60 @@ export default function AdditionalScene({ nextPage }: Props) {
     const submit = handleSubmit(async values => {
         const {
             maxCapacity,
+            zip,
+            street,
+            state,
+            city,
             ...rest
         } = values
-        dispatch(updateData({
-            ...rest,
-            maxCapacity: Number(maxCapacity)
-        }))
-        nextPage()
+
+        const address = [street, city, state, zip].join(", ")
+
+        try {
+            setLoading(true)
+
+            const { results: [res] } = await lookup(address).unwrap()
+            const { geometry: { location: { lat, lng } } } = res
+
+            dispatch(updateData({
+                ...rest,
+                lat,
+                lng,
+                zip,
+                address,
+                maxCapacity: Number(maxCapacity)
+            }))
+
+            setLoading(false)
+            nextPage()
+        } catch (e) {
+            setError("street", {
+                type: "server",
+                message: "Your street address may be incorrect"
+            })
+            setError("city", {
+                type: "server",
+                message: "Your city may be incorrect"
+            })
+            setError("state", {
+                type: "server",
+                message: "Your state may be incorrect"
+            })
+            setError("zip", {
+                type: "server",
+                message: "Your zip code may be incorrect"
+            })
+
+            setLoading(false)
+        }
     })
 
     return (
         <Stack spacing="20px" maxWidth="500px" margin="32px">
+            {
+                loading &&
+                <LoadingBar/>
+            }
             <FormField
                 control={control}
                 id="providerName"

@@ -8,7 +8,7 @@ import { useDrawer } from "../../contexts/DrawerProvider"
 import { useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import { getSlidingWindowSlice } from "../../redux/store"
-import { DELAYS, DURATION } from "../../loaders/WindowLoader/config"
+import { DURATION } from "../../loaders/WindowLoader/config"
 import { changeState } from "../../redux/slices/slidingWindowSlice"
 
 type Props = {
