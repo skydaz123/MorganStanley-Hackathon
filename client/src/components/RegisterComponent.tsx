@@ -1,11 +1,11 @@
-import FormField from "./FormField";
-import Box from '@mui/material/Box';
-import { useForm } from "react-hook-form";
-import {Button, Stack, Typography} from "@mui/material";
-import React from "react";
-import Divider from '@mui/material/Divider';
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import axios from "axios";
+import FormField from "./FormField"
+import Box from '@mui/material/Box'
+import { useForm } from "react-hook-form"
+import { Button, Stack, Typography } from "@mui/material"
+import React from "react"
+import Divider from '@mui/material/Divider'
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth"
+import axios from "axios"
 import { GEOCODE_KEY } from "../environment"
 
 

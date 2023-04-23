@@ -1,10 +1,10 @@
-import FormField from "./FormField";
-import Box from '@mui/material/Box';
-import { useForm } from "react-hook-form";
-import {Button, Stack, Typography} from "@mui/material";
-import React from "react";
-import Divider from '@mui/material/Divider';
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import FormField from "./FormField"
+import Box from '@mui/material/Box'
+import { useForm } from "react-hook-form"
+import { Button, Stack, Typography } from "@mui/material"
+import React from "react"
+import Divider from '@mui/material/Divider'
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
 
 export default function LoginComponent() {
     const { control, handleSubmit } = useForm({

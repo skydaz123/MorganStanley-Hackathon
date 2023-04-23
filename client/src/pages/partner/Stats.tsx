@@ -1,56 +1,43 @@
-import * as React from 'react';
-import {Box, Typography} from "@mui/material";
+import * as React from 'react'
+import { useEffect, useMemo } from 'react'
+import { Box, CircularProgress, Typography } from "@mui/material"
 import useHideSlidingWindowOnLoad from "../../hooks/useHideSlidingWindowOnLoad"
-import {
-    ArgumentAxis,
-    ValueAxis,
-    Chart,
-    BarSeries,
-    SplineSeries,
-    Title,
-} from '@devexpress/dx-react-chart-material-ui';
-import { Animation } from "@devexpress/dx-react-chart";
-import Grid from "@mui/material/Grid";
-import { useDispatch, useSelector } from "react-redux"
-import { useLazyGetReportsQuery } from "../../redux/apis/localApi/firebaseApi"
-import { getAuthSlice } from "../../redux/store"
-import { useState, useEffect } from 'react'
+import { ArgumentAxis, BarSeries, Chart, SplineSeries, Title, ValueAxis, } from '@devexpress/dx-react-chart-material-ui'
+import { Animation } from "@devexpress/dx-react-chart"
+import Grid from "@mui/material/Grid"
+import { useGetReportsQuery } from "../../redux/apis/localApi/firebaseApi"
 
 export default function Stats() {
-    const state = useSelector(getAuthSlice)
-    const [loading, setLoading] = useState(false)
-    const [getReports] = useLazyGetReportsQuery();
-    const [recievedData, setRecievedData] = useState([]);
-    const [givenData, setGivenData] = useState([]);
-    const [wasteData, setWasteData] = useState([]);
-    const [data, setData] = useState([]);
-
-    const getData = async(token: string) => {
-        const result = await getReports(token).unwrap();
-
-        let chartData = result.map((x: {
-            timestamp: any; lb_recieved: any; lb_given: any; 
-            }, index: any) => {
-            return {
-                val_1: x.lb_recieved,
-                val_2: x.lb_given,
-                val_3: x.lb_recieved - x.lb_given,
-                argument: x.timestamp
-            }
-        });
-        chartData.sort((a: { argument: any; }, b: { argument: any; }) => a.argument - b.argument);
-        chartData = chartData.slice(0,4);
-        setData(chartData);
-    }
-
-    useEffect(() => {
-        // @ts-ignore
-        let token: string = state.user.token;
-        getData(token);
-    }, [])
-
     useHideSlidingWindowOnLoad()
 
+    const { data, isFetching, isError, error } = useGetReportsQuery(undefined)
+
+    useEffect(() => {
+        if (!isError)
+            return
+        console.error(error)
+    }, [isError, error])
+
+    const chartData = useMemo(() => {
+        if (isFetching || isError || !data)
+            return []
+
+        const $ = data.map(({ lb_recieved, lb_given, timestamp: argument }) => ({
+            val_1: lb_recieved,
+            val_2: lb_given,
+            val_3: lb_recieved - lb_given,
+            argument,
+        }))
+        $.sort((a: { argument: any; }, b: { argument: any; }) => a.argument - b.argument)
+
+        return $.slice(0, 5)
+    }, [data, isError, isFetching])
+
+    if (isFetching)
+        return <CircularProgress/>
+
+    if (!data)
+        return <>No data.</>
 
     return (
         <Box>
@@ -68,7 +55,7 @@ export default function Stats() {
                 <Grid item xs={3.7}>
                     <Box sx={{ border: '2px solid #EC701B', borderRadius: 2 }}>
                         <Chart
-                            data={data}
+                            data={chartData}
                             height={400}
                         >
                             <ArgumentAxis/>
@@ -82,7 +69,7 @@ export default function Stats() {
                 <Grid item xs={3.7}>
                     <Box sx={{ border: '2px solid #EC701B', borderRadius: 2 }}>
                         <Chart
-                            data={data}
+                            data={chartData}
                             height={400}
                         >
                             <ArgumentAxis/>
@@ -96,7 +83,7 @@ export default function Stats() {
                 <Grid item xs={3.7}>
                     <Box sx={{ border: '2px solid #EC701B', borderRadius: 2 }}>
                         <Chart
-                            data={data}
+                            data={chartData}
                             height={400}
                         >
                             <ArgumentAxis/>
@@ -111,5 +98,5 @@ export default function Stats() {
                 </Grid>
             </Grid>
         </Box>
-    );
+    )
 }

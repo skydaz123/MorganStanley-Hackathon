@@ -1,35 +1,36 @@
-import * as React from 'react';
-import {Box, Button, Typography} from "@mui/material";
+import * as React from 'react'
+import { useEffect } from 'react'
+import { Box, styled, Typography } from "@mui/material"
 import useHideSlidingWindowOnLoad from "../../hooks/useHideSlidingWindowOnLoad"
-import logo from "../../images/acfb-logo.png";
-import backdrop from "../../images/random_hackathon_image.jpg";
-import Grid from '@mui/material/Grid';
-import { useDispatch, useSelector } from "react-redux"
-import { getAuthSlice } from "../../redux/store"
-import { useState, useEffect } from 'react'
-import { useLazyGetUserQuery } from "../../redux/apis/localApi/firebaseApi";
+import logo from "../../images/acfb-logo.png"
+import backdrop from "../../images/random_hackathon_image.jpg"
+import Grid from '@mui/material/Grid'
+import { useGetUserQuery } from "../../redux/apis/localApi/firebaseApi"
+import BigLoader from "../../loaders/BigLoader"
+
+const CustomText = styled(Typography)(() => ({
+    color: "#EC701B",
+    fontSize: 20,
+    fontFamily: "Montserrat, sans-serif",
+    fontWeight: "bold"
+}))
 
 export default function Profile() {
     useHideSlidingWindowOnLoad()
 
-    const [userDisplay, setUser] = useState({
-        name: "",
-        address: "",
-        email: "",
-        phoneNumber: "",
-        maxCapacity: ""
-    });
-    const [getUser] = useLazyGetUserQuery()
-    const {isLoggedIn, user} = useSelector(getAuthSlice)
-    const getUserInfo = async(token: any) => {
-        const result = await getUser(token).unwrap();
-        setUser(result);
-    }
+    const { data: user, isFetching, error, isError } = useGetUserQuery(undefined)
+
     useEffect(() => {
-         // @ts-ignore
-        let token: any = user.token;
-        getUserInfo(token);
-    }, [])
+        if (!isError)
+            return
+        console.error(error)
+    }, [isError, error])
+
+    if (isFetching)
+        return <BigLoader/>
+
+    if (!user)
+        return <>No user found.</>
 
     const textStyle = {
         color: '#EC701B',
@@ -73,56 +74,27 @@ export default function Profile() {
             }}>
                 <img src={backdrop} style={{ width: '100%', height: '30%', zIndex: 1 }}/>
                 <div className="circle">
-                    <div style={{ position: 'absolute', left: '45%', top: '48%', transform:'translate(-50%, -50%)' }}>
+                    <div style={{ position: 'absolute', left: '45%', top: '48%', transform: 'translate(-50%, -50%)' }}>
                         <img src={logo} alt="Placeholder" style={{ width: '120%', height: 'auto' }}/>
                     </div>
                 </div>
-
-                <Grid container spacing={0} sx={{
+                <Grid container spacing={2} sx={{
                     position: 'absolute',
                     left: '5%',
                     top: '48%',
                     gap: 1
                 }}>
-                    <Grid item xs={11}>
-                        <Typography sx={ textStyle }>Org. Address: 
-                            <Typography sx={ normalTextStyle }>
-                            {
-                                // @ts-ignore
-                                userDisplay.address
-                            }
-                            </Typography>
-                        </Typography>
+                    <Grid item xs={6}>
+                        <CustomText >Org. Address: {user.address}</CustomText>
                     </Grid>
-                    <Grid item xs={11}>
-                        <Typography sx={ textStyle }>Org. Email: 
-                            <Typography sx={ normalTextStyle }>
-                            {
-                                // @ts-ignore
-                                userDisplay.email 
-                            }
-                            </Typography>
-                        </Typography>
+                    <Grid item xs={6}>
+                        <CustomText >Org. Email: {user.email}</CustomText>
                     </Grid>
-                    <Grid item xs={11}>
-                        <Typography sx={ textStyle }>Phone Number: 
-                            <Typography sx={ normalTextStyle }>
-                            {
-                                // @ts-ignore
-                                formatPhoneNumber(userDisplay.phoneNumber)
-                            } 
-                            </Typography>
-                        </Typography>
+                    <Grid item xs={6}>
+                        <CustomText >Phone Number: {user.phoneNumber}</CustomText>
                     </Grid>
-                    <Grid item xs={11}>
-                        <Typography sx={ textStyle }>Storage Capacity: 
-                            <Typography sx={ normalTextStyle }>
-                            {
-                                // @ts-ignore
-                                userDisplay.maxCapacity
-                            } lbs
-                            </Typography>
-                        </Typography>
+                    <Grid item xs={6}>
+                        <CustomText >Storage Capacity: {user.maxCapacity}</CustomText>
                     </Grid>
                 </Grid>
             </Box>
