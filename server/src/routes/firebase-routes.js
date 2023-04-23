@@ -5,6 +5,7 @@ import getReports from "../controllers/firebase/getReports.js"
 import getUser from "../controllers/firebase/getUser.js"
 import markers from "../controllers/firebase/markers.js"
 import checkToken from "../middlewares/checkToken.js"
+import getOtherReports from "../controllers/firebase/getOtherReports.js"
 
 const firebaseRouter = Router()
 
@@ -19,5 +20,7 @@ firebaseRouter.get("/getUser", checkToken, getUser)
 firebaseRouter.post("/addReport", checkToken, addReport)
 
 firebaseRouter.get("/getReports", checkToken, getReports)
+
+firebaseRouter.get("/getOtherReports", checkToken, getOtherReports)
 
 export default firebaseRouter
