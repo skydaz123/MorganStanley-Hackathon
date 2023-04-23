@@ -8,7 +8,8 @@ import {
   Modal,
   List,
   ListItem,
-  ListItemText
+  ListItemText,
+  SvgIcon
 } from '@mui/material'; // Import Modal here
 import Stack from '@mui/material/Stack';
 import L, { Icon } from 'leaflet';
@@ -32,7 +33,13 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
+import "leaflet-draw"
 
+//replace buttons by leaflet.pm
+
+
+//Icon for making zone shape
+import BrushIcon from '@mui/icons-material/Brush';
 //drawer for hamburger on side
 import MapDrawer from './MapDrawer';
 //hide 
@@ -48,6 +55,8 @@ const myIcon = new Icon({
     iconSize: [25, 41],
     iconAnchor: [12, 41],
 });
+
+
 
 function calculateStorageQuantity(lastDeliveryDate) {
   const currentDate = new Date();
@@ -74,6 +83,8 @@ const bounds = L.latLngBounds(southWest, northEast);
 var maps = null;
 var routing = null;
 var line = null;
+var markers = [];
+var availableLocations = [];
 const locations = [
   {lat: 33.7671923, lng: -84.40537119999999},
   {lat: 33.79994, lng: -84.42485099999999},
@@ -82,7 +93,6 @@ const locations = [
   {lat: 33.78034239999999, lng: -84.410242},
   {lat: 33.7485041, lng: -84.3365784},
 ];
-
 
 function generateGraphData(location) {
   const data = location.dailyData.lastRequestedDates.map((date) => {
@@ -93,11 +103,13 @@ function generateGraphData(location) {
   return data;
 }
 
+
 export default function Map() {
+
   const [check, setCheck] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
-
+  const [block, setBlock] = useState(false);
   const handleOpenModal = (location) => {
     setSelectedLocation(location);
     setIsModalOpen(true);
@@ -112,7 +124,6 @@ export default function Map() {
       maps.flyTo([33.753746,-84.386330], 12)
       map.removeControl(map.zoomControl);
       map.attributionControl.setPrefix('');
-      var markers = [];
 
       const locations = [
         {
@@ -244,17 +255,21 @@ export default function Map() {
        calculateDistances();
       
    }, []);
+   if(!block) {
+      availableLocations = locations;
+   }
 
-    
-      useEffect(() => {
-        console.log("useeffect");
-        locations.forEach((loc) => {
+        availableLocations.forEach((loc) => {
+          console.log("Length is " + availableLocations.length)
           const marker = L.marker([loc.lat, loc.lng], { icon: myIcon }).addTo(map);
           //marker.bindPopup("Hello World!").openPopup();
           // Attach click event handler for marker to open modal
           marker.on('click', () => handleOpenModal(loc));
+          markers.push(marker)
+          //availableLocations[loc.name] = {lat: marker.getLatLng().lat, lng: marker.getLatLng().lng};
+          //console.log("available is " + availableLocations[loc.name].lat);
         });
-      });
+
       map.pm.addControls({
         position: 'topright',
         drawPolygon: true,
@@ -275,6 +290,8 @@ export default function Map() {
 
       map.on('pm:create', (e) => {
         const layer = e.layer;
+        var temp = markers;
+        var itemToDelete = [];
         markers.forEach(mark => {
           if (!(mark instanceof L.Marker)) 
             return;
@@ -282,10 +299,34 @@ export default function Map() {
           const point = turf.point([latlng.lng, latlng.lat]);
           const isInside = turf.booleanPointInPolygon(point, layer.toGeoJSON());
           if (!isInside) {
+            //remove from temp
+            itemToDelete.push(mark);
             map.removeLayer(mark);
           }
         });
         map.removeLayer(layer);
+        let index = 0;
+        for(let i = 0; index < itemToDelete.length; i++)
+        {
+          console.log(temp[i].getLatLng().lat);
+          console.log(itemToDelete[index].getLatLng().lat)
+          if(temp[i].getLatLng().lat === itemToDelete[index].getLatLng().lat && temp[i].getLatLng().lng === itemToDelete[index].getLatLng().lng)
+          {
+            console.log("GOT IN:")
+            temp.splice(i, 1);
+            i = -1;
+            index++;
+          }
+        }
+        markers = temp;
+        console.log("before addition" + availableLocations);
+        let tempArr = [];
+        for(let i = 0; i < markers.length; i++)
+        {
+          tempArr.push({lat: markers[i].getLatLng().lat, lng: markers[i].getLatLng().lng});
+        }
+        availableLocations = tempArr;
+        console.log("Markers length is " + availableLocations.length)
       });
       return null;
     }
@@ -306,10 +347,11 @@ export default function Map() {
       if(!check)
       {
         if(routing === null) { 
+          console.log("length is " + availableLocations.length)
           console.log("Drawing routes");
           routing = L.Routing.control({
             createMarker: function() { return null; } ,
-            
+            waypoints: availableLocations,
             //showAlternatives: false,
     
             //Snap waypoints to nearest road and will not include walk up route
@@ -321,7 +363,8 @@ export default function Map() {
               styles: [{className: 'hide'}] // Adding animate class
             },
           }).addTo(maps);
-          routing.on('routeselected', function(e) {
+            routing.on('routeselected', function(e) {
+            //console.log(e.route.coordinates);
             line = L.polyline(e.route.coordinates, {snakingSpeed: 200});
             line.addTo(maps).snakeIn();
             line.setStyle({opacity: 1});
@@ -334,7 +377,14 @@ export default function Map() {
             // });
           });
           routing ._container.style.display = "none" // <--- remove control
-          routing.setWaypoints(locations);
+          console.log("length is " + markers.length);
+          console.log(locations);
+          console.log(availableLocations);
+          if(!block) {;
+            setBlock(!block);
+            console.log("It is " + availableLocations);
+          }
+          routing.setWaypoints(availableLocations);
         }
         else {
           line.setStyle({opacity: 1});
@@ -345,6 +395,14 @@ export default function Map() {
         line.setStyle({opacity: 0});
       }
       setCheck(!check);
+    }
+
+    function handleEdit() {
+      console.log("Edit active");
+      //let polylineDrawer = new L.Draw.Polyline(maps, {})
+      //polylineDrawer.enable()
+      let rectangle = new L.Draw.Rectange(maps, {})
+      rectangle.enable();
     }
 
     return (
@@ -437,6 +495,10 @@ export default function Map() {
             </MapContainer>
             <div style={{ position: 'absolute', bottom: '20px', right: '20px', zIndex: '1000' }}>
                 <Stack spacing={2}>
+                    <IconButton onClick={() => handleEdit()}
+                                sx={{ backgroundColor: 'white', borderRadius: 3 }}>
+                        <BrushIcon/>
+                    </IconButton>
                     <IconButton onClick={() => handleDraw()}
                                 sx={{ backgroundColor: 'white', borderRadius: 3 }}>
                         <GpsFixedIcon/>
