@@ -11,15 +11,3 @@ code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-
-.circle {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    border: 8px solid #EC701B;
-    position: absolute;
-    top: 13%;
-    left: 36%;
-    z-index: 2;
-    background-color: white;
-}
