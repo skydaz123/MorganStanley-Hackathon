@@ -64,7 +64,6 @@ export default function Stats() {
                     </Box>
                 </Grid>
                 <Grid item xs={6}>
-
                 </Grid>
             </Grid>
         </Box>
