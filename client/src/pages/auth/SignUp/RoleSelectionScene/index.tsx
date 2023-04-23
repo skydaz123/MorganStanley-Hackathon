@@ -1,18 +1,24 @@
 import { Box, Radio } from "@mui/material"
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material"
-import logo from "../../images/acfb-logo.png"
+import logo from "../../../../images/acfb-logo.png"
 import { useMemo, useState } from "react"
 import Wrapper from "./Wrapper"
 import ButtonContainer from "./ButtonContainer"
 import Card from "./Card"
+import { useDispatch } from "react-redux"
+import { updateData } from "../../../../redux/slices/signUpSlice"
+import Role from "../../../../enums/role"
 
 const ROLES = [
-    { id: 1, name: "Distributor" },
-    { id: 2, name: "Partner" },
-    { id: 3, name: "To Be Added" },
+    { id: Role.Distributor, name: "Distributor" },
+    { id: Role.Partner, name: "Partner" },
 ]
 
-export default function RoleSelection() {
+type Props = {
+    nextPage: () => any
+}
+export default function RoleSelectionScene({ nextPage }: Props) {
+    const dispatch = useDispatch()
     const [roleIdx, setRoleIdx] = useState(0)
 
     const { id, name } = useMemo(() => ROLES[roleIdx], [roleIdx])
@@ -30,7 +36,11 @@ export default function RoleSelection() {
     })
 
     const selectRole = () => {
-        window.alert(`Selected role id=${id} name="${name}"`)
+        const ok = window.confirm(`Are you sure you want to continue as a \"${name}\"?`)
+        if (!ok)
+            return
+        dispatch(updateData({ role: id }))
+        nextPage()
     }
 
     return (

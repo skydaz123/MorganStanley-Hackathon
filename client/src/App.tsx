@@ -3,23 +3,26 @@ import { CircularProgress } from "@mui/material"
 import RootLayout from "./layouts/RootLayout"
 import { lazy } from "react"
 import RootBoundary from "./boundaries/RootBoundary"
+import "./firebase_config"
+import partnerRoutes from "./routes/partner-routes"
+import NotFound from "./pages/NotFound"
+import authRoutes from "./routes/auth-routes"
 
-const HeaderLayout = lazy(() => import("./layouts/SplashLayout"))
 const Home = lazy(() => import("./pages/Home"))
-const Login = lazy(() => import("./pages/Login"))
-const RoleSelection = lazy(() => import("./pages/RoleSelection"))
-const Map = lazy(() => import("./components/Map"));
+const Map = lazy(() => import("./components/Map"))
 
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path="/" element={<RootLayout/>} errorElement={<RootBoundary/>}>
-            <Route path="" element={<HeaderLayout/>}>
-                <Route path="" element={<Home/>}/>
-            </Route>
-            <Route path="login" element={<Login/>}/>
-            <Route path="role-selection" element={<RoleSelection/>}/>
+            <Route path="" element={<Home/>}/>
+
+            {authRoutes}
 
             <Route path="map" element={<Map/>}/>
+
+            {partnerRoutes}
+
+            <Route path="*" element={<NotFound/>}/>
         </Route>
     )
 )

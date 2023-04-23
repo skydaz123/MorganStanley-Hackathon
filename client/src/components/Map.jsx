@@ -34,6 +34,8 @@ import {
   Legend,
 } from 'recharts';
 import "leaflet-draw"
+import axios from 'axios';
+
 
 //replace buttons by leaflet.pm
 
@@ -83,16 +85,14 @@ const bounds = L.latLngBounds(southWest, northEast);
 var maps = null;
 var routing = null;
 var line = null;
-var markers = [];
-var availableLocations = [];
-const locations = [
-  {lat: 33.7671923, lng: -84.40537119999999},
-  {lat: 33.79994, lng: -84.42485099999999},
-  {lat: 33.7749219, lng: -84.2929674},
-  {lat: 33.627911, lng: -84.4715296},
-  {lat: 33.78034239999999, lng: -84.410242},
-  {lat: 33.7485041, lng: -84.3365784},
-];
+// const locations = [
+//   {lat: 33.7671923, lng: -84.40537119999999},
+//   {lat: 33.79994, lng: -84.42485099999999},
+//   {lat: 33.7749219, lng: -84.2929674},
+//   {lat: 33.627911, lng: -84.4715296},
+//   {lat: 33.78034239999999, lng: -84.410242},
+//   {lat: 33.7485041, lng: -84.3365784},
+// ];
 
 function generateGraphData(location) {
   const data = location.dailyData.lastRequestedDates.map((date) => {
@@ -117,6 +117,14 @@ export default function Map() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+  const [locations, setLocations] = useState([]);
+  useEffect(() => {
+    axios.get('http://localhost:8000/firebase/markers')
+      .then((res) => {
+        setLocations(res.data);
+        console.log("res data", res.data);
+    })
+  }, [])
 
     function MapC() {
       const map = useMap();
@@ -124,74 +132,77 @@ export default function Map() {
       maps.flyTo([33.753746,-84.386330], 12)
       map.removeControl(map.zoomControl);
       map.attributionControl.setPrefix('');
+      var markers = [];
+      
 
-      const locations = [
-        {
-          name: '466 Northside Dr NW, Atlanta, GA 30318',
-          lat: 33.7671923,
-          lng: -84.40537119999999,
-          lastDeliveryDate: '2023-04-15',
-          dailyData: {
-            storageQuantity: calculateStorageQuantity('2023-04-15'),
-            lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
-          },
-        },
-        {
-          name: '1122A Old Chattahoochee Ave NW # A, Atlanta, GA 30318',
-          lat: 33.79994,
-          lng: -84.42485099999999,
-          lastDeliveryDate: '2023-04-12',
-          dailyData: {
-            storageQuantity: calculateStorageQuantity('2023-04-12'),
-            lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
-          },
-        },
-        {
-          name: '246 Sycamore St, Decatur, GA 30030',
-          lat: 33.7749219,
-          lng: -84.2929674,
-          lastDeliveryDate: '2023-04-10',
-          dailyData: {
-            storageQuantity: calculateStorageQuantity('2023-04-10'),
-            lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
-          },
-        },
-        {
-          name: '2514 W Point Ave, Atlanta, GA 30337',
-          lat: 33.627911,
-          lng: -84.4715296,
-          lastDeliveryDate: '2023-04-18',
-          dailyData: {
-            storageQuantity: calculateStorageQuantity('2023-04-18'),
-            lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
-          },
-        },
-        {
-          name: '921 Howell Mill Rd NW, Atlanta, GA 30318',
-          lat: 33.78034239999999,
-          lng: -84.410242,
-          lastDeliveryDate: '2023-04-17',
-          dailyData: {
-            storageQuantity: calculateStorageQuantity('2023-04-17'),
-            lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
-          },
-        },
-        {
-          name: '1560 Memorial Dr SE, Atlanta, GA 30317',
-          lat: 33.7485041,
-          lng: -84.3365784,
-          lastDeliveryDate: '2023-04-20',
-          dailyData: {
-            storageQuantity: calculateStorageQuantity('2023-04-20'),
-            lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
-          },
-        },
-      ];
+      // const locations = [
+      //   {
+      //     name: '466 Northside Dr NW, Atlanta, GA 30318',
+      //     lat: 33.7671923,
+      //     lng: -84.40537119999999,
+      //     lastDeliveryDate: '2023-04-15',
+      //     dailyData: {
+      //       storageQuantity: calculateStorageQuantity('2023-04-15'),
+      //       lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
+      //     },
+      //   },
+      //   {
+      //     name: '1122A Old Chattahoochee Ave NW # A, Atlanta, GA 30318',
+      //     lat: 33.79994,
+      //     lng: -84.42485099999999,
+      //     lastDeliveryDate: '2023-04-12',
+      //     dailyData: {
+      //       storageQuantity: calculateStorageQuantity('2023-04-12'),
+      //       lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
+      //     },
+      //   },
+      //   {
+      //     name: '246 Sycamore St, Decatur, GA 30030',
+      //     lat: 33.7749219,
+      //     lng: -84.2929674,
+      //     lastDeliveryDate: '2023-04-10',
+      //     dailyData: {
+      //       storageQuantity: calculateStorageQuantity('2023-04-10'),
+      //       lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
+      //     },
+      //   },
+      //   {
+      //     name: '2514 W Point Ave, Atlanta, GA 30337',
+      //     lat: 33.627911,
+      //     lng: -84.4715296,
+      //     lastDeliveryDate: '2023-04-18',
+      //     dailyData: {
+      //       storageQuantity: calculateStorageQuantity('2023-04-18'),
+      //       lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
+      //     },
+      //   },
+      //   {
+      //     name: '921 Howell Mill Rd NW, Atlanta, GA 30318',
+      //     lat: 33.78034239999999,
+      //     lng: -84.410242,
+      //     lastDeliveryDate: '2023-04-17',
+      //     dailyData: {
+      //       storageQuantity: calculateStorageQuantity('2023-04-17'),
+      //       lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
+      //     },
+      //   },
+      //   {
+      //     name: '1560 Memorial Dr SE, Atlanta, GA 30317',
+      //     lat: 33.7485041,
+      //     lng: -84.3365784,
+      //     lastDeliveryDate: '2023-04-20',
+      //     dailyData: {
+      //       storageQuantity: calculateStorageQuantity('2023-04-20'),
+      //       lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
+      //     },
+      //   },
+      // ];
 
        //has all of the distances from point a to all other points. Each row is a unique location, and its column is the endpoint.
    const [distanceMatrix, setDistanceMatrix] = useState([]);
 
 
+ 
    const calculateDistances = async () => {
        const matrix = [];
        const controls = {};
@@ -205,6 +216,16 @@ export default function Map() {
            }
          };
     
+         const greenIcon = L.icon({
+          iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+          shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+          shadowSize: [41, 41],
+        });
+        
+         
        for (const origin of locations) {
          const row = [];
          for (const destination of locations) {
@@ -215,19 +236,24 @@ export default function Map() {
     
            const key = `${origin.lat},${origin.lng}_${destination.lat},${destination.lng}`;
            const control = L.Routing.control({
-               waypoints: [
-                 L.latLng(origin.lat, origin.lng),
-                 L.latLng(destination.lat, destination.lng),
-               ],
-               lineOptions: {
-                 styles: [{ color: 'transparent' }],
-               },
-               createMarker: () => null,
-               addWaypoints: false,
-               routeWhileDragging: false,
-               showAlternatives: false,
-               fitSelectedRoutes: false,
-             });//.addTo(map);
+            waypoints: [
+              L.latLng(origin.lat, origin.lng),
+              L.latLng(destination.lat, destination.lng),
+            ],
+            lineOptions: {
+              styles: [{ color: 'transparent' }],
+            },
+            createMarker: (i, waypoint, n) => {
+              
+              return L.marker(waypoint.latLng, {
+                icon: greenIcon
+              });
+            },
+            addWaypoints: false,
+            routeWhileDragging: false,
+            showAlternatives: false,
+            fitSelectedRoutes: false,
+          });
             
              controls[key] = control;
             
