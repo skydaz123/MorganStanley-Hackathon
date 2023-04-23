@@ -10,15 +10,20 @@ type User = {
     role: Role
 }
 
+type Token = {
+    value: string
+    expirationTime: number
+}
+
 type AuthState = {
     isLoggedIn: boolean
-    token: string | null
+    token?: Token
     user?: User
 }
 
 const initialState: AuthState = {
     isLoggedIn: false,
-    token: null,
+    token: undefined,
     user: undefined,
 }
 
@@ -37,10 +42,10 @@ export const authSlice = createSlice({
         logout: (state, { }: { payload: undefined }) => {
             state.isLoggedIn = false
             state.user = undefined
-            state.token = null
+            state.token = undefined
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
         },
-        addToken: (state, { payload }: { payload: string }) => {
+        addToken: (state, { payload }: { payload: Token }) => {
             state.token = payload
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
         },

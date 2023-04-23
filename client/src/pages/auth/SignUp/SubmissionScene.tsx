@@ -37,8 +37,14 @@ export default function SubmissionScene() {
         async function operation() {
             const { user } = await createUserWithEmailAndPassword(auth, email, password)
 
-            const token = await user.getIdToken(true)
-            dispatch(addToken(token))
+            const {
+                token,
+                expirationTime,
+            } = await user.getIdTokenResult(true)
+            dispatch(addToken({
+                value: token,
+                expirationTime: new Date(expirationTime).getTime(),
+            }))
 
             const result = await addUser({
                 lat,
