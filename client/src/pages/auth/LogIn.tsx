@@ -8,6 +8,11 @@ import CustomButton from "../../components/CustomButton"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useNavigate } from "react-router-dom"
+import { signInWithEmailAndPassword } from "firebase/auth"
+import { auth } from "../../firebase"
+import { useDispatch } from "react-redux"
+import { register } from "../../redux/slices/authSlice"
+import { useLazyGetUserQuery } from "../../redux/apis/localApi/firebaseApi"
 
 const formSchema = z.object({
     email: z.string()
@@ -20,8 +25,12 @@ const formSchema = z.object({
 
 export default function LogIn() {
     const navigate = useNavigate()
+    const dispatch = useDispatch()
+
+    const [getUser] = useLazyGetUserQuery()
     const [loading, setLoading] = useState(false)
-    const { control, handleSubmit } = useForm({
+
+    const { control, handleSubmit, reset } = useForm({
         defaultValues: {
             email: "",
             password: "",
@@ -34,23 +43,34 @@ export default function LogIn() {
         if (loading)
             return
 
-        console.log("[LogIn]", values)
+        const { email, password, } = values
 
-        setLoading(true)
+        try {
+            setLoading(true)
 
-        await new Promise(res => {
-            setTimeout(() => {
-                res(undefined)
-            }, 2000)
-        })
+            const { user } = await signInWithEmailAndPassword(auth, email, password)
+
+            const token = await user.getIdToken(true)
+
+            const result = await getUser(token).unwrap()
+            console.log(result)
+
+            // add result to dispatch
+            dispatch(register({
+                email,
+                id: user.uid,
+                name: user.displayName,
+                token,
+            }))
+
+            // use result.role to navigate
+
+            reset()
+        } catch (error) {
+            console.error(error)
+        }
 
         setLoading(false)
-
-        if (Math.random() < 0.5) {
-            navigate("/map")
-        } else {
-            navigate("/partner")
-        }
     })
 
     return (

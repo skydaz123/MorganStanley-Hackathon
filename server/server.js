@@ -74,29 +74,61 @@ app.post('/firebase/addUser', async(req, res) => {
   if(doesExist.data() !== undefined){
     return res.status(400).json();
   }
+  // const data = {
+  //   address: req.body.address,
+  //   lat: req.body.lat,
+  //   long: req.body.long,
+  //   zipcode: req.body.zipcode,
+  //   email: req.body.email,
+  //   name: req.body.name
+  // };
+
+  const {
+    lat,
+    lng,
+    zipcode,
+    email,
+    name,
+    address,
+    role,
+    maxCapacity,
+    phoneNumber,
+  } = req.body
   const data = {
-    address: req.body.address,
-    lat: req.body.lat,
-    long: req.body.long,
-    zipcode: req.body.zipcode,
-    email: req.body.email,
-    name: req.body.name
-  };
+    lat,
+    lng,
+    zipcode,
+    email,
+    name,
+    address,
+    role, // "0", "1", "2"
+    maxCapacity,
+    phoneNumber,
+  }
+
   console.log("here");
-  const addedUser = await db.collection('partners').doc(req.body.email).set(data);
+  const addedUser = await db.collection('partners')
+      .doc(email)
+      .set(data);
 
   const markerData = {
-    isBank: false,
-    lat: req.body.lat,
-    long: req.body.long,
-    name: req.body.name,
-    email: req.body.email,
-    address: req.body.address
+    isBank: role === "1",
+    lat,
+    lng,
+    name,
+    email,
+    address,
   }
-  const addedMarker = await db.collection('markers').doc(req.body.address).set(data);
-  console.log(addedUser);
-  res.status(200).json();
+  const addedMarker = await db.collection('markers')
+      .doc(email)
+      .set(markerData);
+
+  console.log(addedUser, addedMarker);
+
+  res.send(data);
 });
+
+
 
 app.use('/firebase', user)
 app.use('/firebase', map)
