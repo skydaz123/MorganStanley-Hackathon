@@ -59,7 +59,7 @@ export default function CustomDrawer() {
         <Drawer variant="permanent" open={isOpen}>
             <List>
                 <LogoTab logo={logo} name="Placeholder"/>
-                <Tab text="Request" icon={<Send/>} link="request"/>
+                <Tab text="Report" icon={<Send/>} link="report"/>
                 <Tab text="Statistics" icon={<BarChart/>} link="stats"/>
                 <Tab text="History" icon={<Timeline/>} link="history"/>
                 <Tab text="Profile" icon={<Person/>} link="profile"/>
