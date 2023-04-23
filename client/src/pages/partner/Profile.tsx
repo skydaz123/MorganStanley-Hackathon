@@ -4,9 +4,26 @@ import useHideSlidingWindowOnLoad from "../../hooks/useHideSlidingWindowOnLoad"
 import logo from "../../images/acfb-logo.png";
 import backdrop from "../../images/random_hackathon_image.jpg";
 import Grid from '@mui/material/Grid';
+import { useDispatch, useSelector } from "react-redux"
+import { getAuthSlice } from "../../redux/store"
+import { useState, useEffect } from 'react'
+import { useLazyGetUserQuery } from "../../redux/apis/localApi/firebaseApi";
 
 export default function Profile() {
     useHideSlidingWindowOnLoad()
+
+    const [userDisplay, setUser] = useState();
+    const [getUser] = useLazyGetUserQuery()
+    const {isLoggedIn, user} = useSelector(getAuthSlice)
+    const getUserInfo = async(token: any) => {
+        const result = await getUser(token).unwrap();
+        setUser(result);
+    }
+    useEffect(() => {
+         // @ts-ignore
+        let token: any = user.token;
+        getUserInfo(token);
+    }, [])
 
     const textStyle = {
         color: '#EC701B',
@@ -51,16 +68,28 @@ export default function Profile() {
                     gap: 1
                 }}>
                     <Grid item xs={6}>
-                        <Typography sx={ textStyle }>Org. Address: </Typography>
+                        <Typography sx={ textStyle }>Org. Address: {
+                        // @ts-ignore
+                        userDisplay.address
+                        }</Typography>
                     </Grid>
                     <Grid item xs={6}>
-                        <Typography sx={ textStyle }>Org. Email:</Typography>
+                        <Typography sx={ textStyle }>Org. Email:{
+                           // @ts-ignore
+                            userDisplay.email 
+                        }</Typography>
                     </Grid>
                     <Grid item xs={6}>
-                        <Typography sx={ textStyle }>Phone Number: </Typography>
+                        <Typography sx={ textStyle }>Phone Number: {
+                            // @ts-ignore
+                            userDisplay.phoneNumber
+                        } </Typography>
                     </Grid>
                     <Grid item xs={6}>
-                        <Typography sx={ textStyle }>Storage Capacity: </Typography>
+                        <Typography sx={ textStyle }>Storage Capacity: {
+                            // @ts-ignore
+                            userDisplay.maxCapacity
+                        }</Typography>
                     </Grid>
                 </Grid>
             </Box>
