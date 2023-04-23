@@ -10,6 +10,7 @@ import { auth } from "../../firebase"
 import { signOut } from "firebase/auth"
 import { useDispatch } from "react-redux"
 import { logout } from "../../redux/slices/authSlice"
+import localApi from "../../redux/apis/localApi"
 
 export default function LogOutTab() {
     const dispatch = useDispatch()
@@ -29,6 +30,7 @@ export default function LogOutTab() {
 
         try {
             await signOut(auth)
+            dispatch(localApi.util.resetApiState())
             dispatch(logout())
             setLoading(false)
         } catch (err) {

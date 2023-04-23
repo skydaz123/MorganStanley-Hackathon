@@ -9,8 +9,8 @@ const localApi = createApi({
         prepareHeaders: (headers, api) => {
             const { token } = (api.getState() as RootState).auth
 
-            if (token)
-                headers.set("Authorization", `Bearer ${token}`)
+            if (token && token.expirationTime >= Date.now())
+                headers.set("Authorization", `Bearer ${token.value}`)
 
             return headers
         },

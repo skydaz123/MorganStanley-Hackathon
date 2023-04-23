@@ -14,6 +14,7 @@ import { addToken, register } from "../../redux/slices/authSlice"
 import { useLazyGetUserQuery } from "../../redux/apis/localApi/firebaseApi"
 import LoadingBar from "../../components/LoadingBar"
 import useRedirectIfLoggedIn from "../../hooks/useRedirectIfLoggedIn"
+import localApi from "../../redux/apis/localApi"
 
 const formSchema = z.object({
     email: z.string()
@@ -52,8 +53,14 @@ export default function LogIn() {
 
             const { user } = await signInWithEmailAndPassword(auth, email, password)
 
-            const token = await user.getIdToken(true)
-            dispatch(addToken(token))
+            const {
+                token,
+                expirationTime,
+            } = await user.getIdTokenResult(true)
+            dispatch(addToken({
+                value: token,
+                expirationTime: new Date(expirationTime).getTime(),
+            }))
 
             const result = await getUser(undefined).unwrap()
             dispatch(register({
