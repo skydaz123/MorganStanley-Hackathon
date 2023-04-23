@@ -85,6 +85,8 @@ const bounds = L.latLngBounds(southWest, northEast);
 var maps = null;
 var routing = null;
 var line = null;
+var availableLocations = [];
+var markers = [];
 // const locations = [
 //   {lat: 33.7671923, lng: -84.40537119999999},
 //   {lat: 33.79994, lng: -84.42485099999999},
@@ -132,7 +134,6 @@ export default function Map() {
       maps.flyTo([33.753746,-84.386330], 12)
       map.removeControl(map.zoomControl);
       map.attributionControl.setPrefix('');
-      var markers = [];
       
 
       // const locations = [
@@ -281,7 +282,8 @@ export default function Map() {
        calculateDistances();
       
    }, []);
-   if(!block) {
+   if(!block && locations) {
+      console.log(locations);
       availableLocations = locations;
    }
 
