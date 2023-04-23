@@ -73,7 +73,7 @@ export default function LogIn() {
                 marginTop: "16px",
                 marginBottom: "8px",
             }}>
-                Already have an account? <Link href="/auth/signup">Sign Up</Link>!
+                Don't have an account? <Link href="/auth/signup">Sign Up</Link>!
             </Typography>
             <Divider sx={{
                 borderColor: "#EC701B",
