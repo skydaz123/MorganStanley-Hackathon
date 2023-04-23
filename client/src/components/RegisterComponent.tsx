@@ -5,7 +5,8 @@ import {Button, Stack, Typography} from "@mui/material";
 import React from "react";
 import Divider from '@mui/material/Divider';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-
+import axios from "axios";
+import { GEOCODE_KEY } from "../environment"
 
 
 export default function RegisterComponent() {
@@ -27,13 +28,35 @@ export default function RegisterComponent() {
     })
 
     const submit = handleSubmit(values => {
+        //Check that password and confirm password match
+        if(values.password !== values.confirmPassword){
+            return;
+        }
+
         const auth = getAuth();
         createUserWithEmailAndPassword(auth, values.email, values.password)
             .then((userCredential) => {
             // Signed in 
             const user = userCredential.user;
-            console.log(user);
+            return user;
             // ...
+            })
+            .then(async(result) => {
+                let address = `${values.street}, ${values.city}, ${values.state}, ${values.zip}`
+                let query = `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${GEOCODE_KEY}`;
+                console.log(query);
+                let res_loc = await axios.get(query);
+                let coor = res_loc.data.results[0].geometry.location;
+                console.log(address, coor.lat, coor.long, values.zip);
+                let res = await axios.post('http://localhost:8000/firebase/addUser', {
+                    address: address,
+                    lat: coor.lat,
+                    long: coor.lng,
+                    zipcode: values.zip,
+                    email: values.email,
+                    name: values.providerName
+                });
+                console.log(res);
             })
             .catch((error) => {
             const errorCode = error.code;

@@ -1,5 +1,6 @@
 import { Box, ButtonProps, Paper, Typography } from "@mui/material"
 import CustomButton from "../../../../components/CustomButton"
+import TextTransition from "react-text-transition"
 
 type Props = {
     name: string
@@ -18,7 +19,7 @@ export default function Card({ name, picture, onSelect }: Props) {
             borderColor: "#EC701B",
         }}>
             <Typography variant="h4" textAlign="center" color="#EC701B">
-                {name}
+                <TextTransition inline>{name}</TextTransition>
             </Typography>
             <Box display="flex" justifyContent="center" padding="16px">
                 <img src={picture} width="250"/>
