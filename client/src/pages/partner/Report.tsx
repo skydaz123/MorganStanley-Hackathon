@@ -17,7 +17,7 @@ const formSchema = z.object({
     foodGiven: positiveNumberSchema,
 })
 
-export default function Request() {
+export default function Report() {
     useHideSlidingWindowOnLoad()
 
     const { user } = useSelector(getAuthSlice)
@@ -62,9 +62,8 @@ export default function Request() {
     return (
         <Box sx={{ p: "32px" }}>
             <Typography variant="h4" gutterBottom sx={{
-                color: '#F46E21',
-                fontSize: '30px',
-                fontFamily: 'Montserrat',
+                color: '#EC701B',
+                fontFamily: 'Montserrat, sans-serif',
             }}>
                 Report Submission
             </Typography>

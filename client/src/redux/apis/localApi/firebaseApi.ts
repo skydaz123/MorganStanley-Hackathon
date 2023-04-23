@@ -80,9 +80,10 @@ export const firebaseApi = rootApi.injectEndpoints({
             query: () => `/firebase/getReports`,
             transformResponse: (data) => {
                 return data as {
-                    timestamp: number
+                    timestamp: string
                     lb_recieved: number
                     lb_given: number
+                    email: string
                 }[]
             },
             providesTags: [REPORT_TAG]
