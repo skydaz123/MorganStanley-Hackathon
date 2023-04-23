@@ -3,6 +3,11 @@
 import React from 'react';
 import { Modal, List, ListItem, ListItemText } from '@mui/material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from "react-redux";
+import { getAuthSlice } from "../redux/store"
+import { useLazyGetUserQuery } from '../redux/apis/localApi/firebaseApi';
+
 
 function LocationModal({ isModalOpen, handleCloseModal, selectedLocation, generateGraphData }) {
   return (
