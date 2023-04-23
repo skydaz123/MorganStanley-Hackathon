@@ -13,6 +13,7 @@ import { auth } from "../../firebase"
 import { useDispatch } from "react-redux"
 import { register } from "../../redux/slices/authSlice"
 import { useLazyGetUserQuery } from "../../redux/apis/localApi/firebaseApi"
+import Role from "../../enums/role"
 
 const formSchema = z.object({
     email: z.string()
@@ -64,6 +65,18 @@ export default function LogIn() {
             }))
 
             // use result.role to navigate
+            switch (result.role) {
+                case Role.Partner:
+                    navigate("/partner")
+                    break
+                case Role.Distributor:
+                    navigate("/map")
+                    break
+                case Role.Unknown:
+                default:
+                    console.error("Invalid role detected")
+                    break
+            }
 
             reset()
         } catch (error) {

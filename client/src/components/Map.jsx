@@ -259,7 +259,7 @@ export default function Map() {
         console.log("useeffect");
         locations.forEach((loc) => {
           console.log(loc);
-          const marker = L.marker([loc.lat, loc.long], { icon: myIcon }).addTo(map);
+          const marker = L.marker([loc.lat, loc.lng], { icon: myIcon }).addTo(map);
           //marker.bindPopup("Hello World!").openPopup();
           // Attach click event handler for marker to open modal
           marker.on('click', () => handleOpenModal(loc));

@@ -33,7 +33,7 @@ export const firebaseApi = rootApi.injectEndpoints({
         }),
         getUser: build.query({
             query: (idToken: string) => `/firebase/getUser/?token=${idToken}`,
-        })
+        }),
     })
 })
 

@@ -1,6 +1,8 @@
 const admin = require('firebase-admin')
 const { initializeApp, applicationDefault, cert } = require('firebase-admin/app');
 const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore');
+const { getAuth } = require('firebase-admin/auth');
+
 
 const express = require('express')
 const dotenv = require('dotenv')
@@ -128,6 +130,22 @@ app.post('/firebase/addUser', async(req, res) => {
 
   res.send(data);
 });
+
+app.get('/firebase/getUser', async(req, res) => {
+  let email = "";
+  await getAuth()
+  .verifyIdToken(req.query.token)
+  .then((decodedToken) => {
+    email = decodedToken.email;
+    // ...
+  })
+  .catch((error) => {
+    return res.status(404).send("Token was not valid sign in again");
+  });
+  let data = (await db.collection('partners').doc(email).get()).data();
+  res.send(data);
+  
+})
 
 app.get('/exec',async(req, res) =>{
   console.log("something");
