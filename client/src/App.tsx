@@ -1,4 +1,4 @@
-import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom"
+    import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom"
 import { CircularProgress } from "@mui/material"
 import RootLayout from "./layouts/RootLayout"
 import { lazy } from "react"

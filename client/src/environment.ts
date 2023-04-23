@@ -2,6 +2,8 @@
 
 export const BACKEND_URL = process.env.REACT_APP_BACKEND_URL!
 export const GEOCODE_KEY = process.env.REACT_APP_GEOCODE_KEY!
+console.log("Yoooooo");
+console.log(process.env.REACT_APP_GEOCODE_KEY!);
 export const FIREBASE_CONFIG = JSON.parse(process.env.REACT_APP_FIREBASE_CONFIG!) as {
     apiKey: string
     authDomain: string

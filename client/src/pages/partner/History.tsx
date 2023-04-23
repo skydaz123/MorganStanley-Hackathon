@@ -9,25 +9,39 @@ const columns: GridColDef[] = [
         field: 'name',
         headerName: 'Name',
         width: 150,
-        editable: true,
+        editable: false,
     },
     {
-        field: 'wastePerPound',
-        headerName: 'Waste Per Pound',
+      field: 'foodReceived',
+      headerName: 'Food Received (lbs)',
+      type: 'number',
+      width: 150,
+      editable: false,
+    },
+    {
+        field: 'foodDonated',
+        headerName: 'Food Donated (lbs)',
         type: 'number',
         width: 150,
-        editable: true,
+        editable: false,
     },
     {
-        field: 'roundTrip',
-        headerName: 'RoundTrip',
-        width: 110,
-        editable: true,
+        field: 'waste',
+        headerName: 'Waste (lbs)',
+        type: 'number',
+        width: 150,
+        editable: false,
+    },
+    {
+        field: 'date',
+        headerName: 'Date',
+        width: 150,
+        editable: false,
     }
 ];
 
 const rows = [
-    { id: 1, name: 'Snow', wastePerPound: 15, roundTrip: '15 miles' },
+    { id: 1, name: 'Snow', foodReceived: 200, foodDonated: 100, waste: 300, date: '02/1/23' },
     { id: 2, name: 'Barrow', wastePerPound: 2, roundTrip: '10 miles' },
 ];
 

@@ -47,37 +47,22 @@ export default function Profile() {
                 <Grid container spacing={2} sx={{
                     position: 'absolute',
                     left: '5%',
-                    top: '58%'
+                    top: '55%',
+                    gap: 1
                 }}>
                     <Grid item xs={6}>
                         <Typography sx={ textStyle }>Org. Address: </Typography>
                     </Grid>
                     <Grid item xs={6}>
-                        <Typography sx={ textStyle }>Org. Join Date:</Typography>
+                        <Typography sx={ textStyle }>Org. Email:</Typography>
                     </Grid>
                     <Grid item xs={6}>
-                        <Typography sx={ textStyle }>Business Hour:</Typography>
+                        <Typography sx={ textStyle }>Phone Number: </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Typography sx={ textStyle }>Storage Capacity: </Typography>
                     </Grid>
                 </Grid>
-                <Button variant="outlined" onClick={handleClick} sx={{
-                    border: '3px solid #EC701B !important',
-                    '&:hover': {
-                        border: '3px solid #EC701B !important',
-                        backgroundColor: '#F46E21cc',
-                        color: 'white !important'
-                    },
-                    width: '300px',
-                    height: '50px',
-                    color: '#EC701B',
-                    fontSize: 20,
-                    fontFamily: 'Montserrat, sans-serif',
-                    fontWeight: '600',
-                    position: 'absolute',
-                    left: '25%',
-                    top: '83%'
-                }}>
-                    Request
-                </Button>
             </Box>
         </Box>
     )
