@@ -5,12 +5,15 @@ import { changeState } from "../../../redux/slices/slidingWindowSlice"
 import { DELAYS, DURATION } from "../../../loaders/WindowLoader/config"
 import { nextScene } from "../../../redux/slices/signUpSlice"
 import AdditionalScene from "./AdditionalScene"
+import useRedirectIfLoggedIn from "../../../hooks/useRedirectIfLoggedIn"
 
 const FormScene = lazy(() => import("./FormScene"))
 const RoleSelectionScene = lazy(() => import("./RoleSelectionScene"))
 const SubmissionScene = lazy(() => import("./SubmissionScene"))
 
 export default function SignUp() {
+    useRedirectIfLoggedIn()
+
     const dispatch = useDispatch()
     const { state } = useSelector(getSlidingWindowSlice)
     const { currentScene: scene } = useSelector(getSignUpSlice)
