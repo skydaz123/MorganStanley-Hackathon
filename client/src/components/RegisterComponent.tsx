@@ -32,7 +32,7 @@ export default function RegisterComponent() {
             return;
         }
 
-        const auth = getAuth();
+        const auth = getAuth()
         createUserWithEmailAndPassword(auth, values.email, values.password)
             .then((userCredential) => {
             // Signed in 

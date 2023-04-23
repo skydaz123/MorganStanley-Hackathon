@@ -3,43 +3,63 @@ import { useDispatch, useSelector } from "react-redux"
 import { getSignUpSlice } from "../../../redux/store"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { resetScenes } from "../../../redux/slices/signUpSlice"
+import { createUserWithEmailAndPassword } from "firebase/auth"
+import { auth } from "../../../firebase"
+import { useLazyGetAddressInfoQuery } from "../../../redux/apis/mapsApi/geocodeApi"
+import { useAddUserMutation } from "../../../redux/apis/localApi/firebaseApi"
 import Role from "../../../enums/role"
-
-function sendSignUp(email: string, password: string, role: string) {
-    return new Promise(res => {
-        setTimeout(() => {
-            res(email)
-        }, 5000)
-    })
-}
+import { resetScenes } from "../../../redux/slices/signUpSlice"
 
 export default function SubmissionScene() {
-    const [message, setMessage] = useState("Submitting")
-    const { data, currentScene } = useSelector(getSignUpSlice)
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
+    const { data, currentScene } = useSelector(getSignUpSlice)
+    const [lookup] = useLazyGetAddressInfoQuery()
+    const [addUser] = useAddUserMutation()
+
+    const [message, setMessage] = useState("Submitting")
+
     useEffect(() => {
-        if (currentScene < 2)
-            return
+        setMessage("Signing up")
 
-        // extract payload
-        const { email, role, password } = data
+        const {
+            email,
+            password,
 
-        // check if all fields are filled out
-        if (!email || !role || !password) {
-            dispatch(resetScenes())
-            return
-        }
+            city,
+            zip,
+            street,
+            state,
 
-        // send data
-        let stop = false
+            role,
+            providerName,
+            phoneNumber,
+            maxCapacity,
+        } = data
+
+        const address = [street, city, state, zip].join(", ")
+
         async function operation() {
-            setMessage("Signing up")
-            await sendSignUp(email, password, role)
+            const { user } = await createUserWithEmailAndPassword(auth, email, password)
 
-            switch (role) {
+            const { results: [res] } = await lookup(address).unwrap()
+
+            const { geometry: { location: { lat, lng } } } = res
+
+            const result = await addUser({
+                lat,
+                lng,
+                zipcode: zip,
+                email,
+                name: providerName,
+                address,
+                role,
+                maxCapacity,
+                phoneNumber,
+            }).unwrap()
+
+            switch (result.role) {
                 case Role.Partner:
                     navigate("/partner")
                     break
@@ -51,11 +71,9 @@ export default function SubmissionScene() {
                     console.error("Invalid role detected")
                     break
             }
+            dispatch(resetScenes())
         }
         operation().catch(console.error)
-        return () => {
-            stop = true
-        }
     }, [data, currentScene])
 
     return (
