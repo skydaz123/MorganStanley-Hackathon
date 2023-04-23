@@ -22,35 +22,25 @@ export default function Stats() {
     const [getReports] = useLazyGetReportsQuery();
     const [recievedData, setRecievedData] = useState([]);
     const [givenData, setGivenData] = useState([]);
+    const [wasteData, setWasteData] = useState([]);
+    const [data, setData] = useState([]);
 
     const getData = async(token: string) => {
-        console.log("BeepBooop");
         const result = await getReports(token).unwrap();
 
-        let foodRecievedData = result.map((x: {
+        let chartData = result.map((x: {
             timestamp: any; lb_recieved: any; lb_given: any; 
             }, index: any) => {
             return {
-                value: x.lb_recieved,
+                val_1: x.lb_recieved,
+                val_2: x.lb_given,
+                val_3: x.lb_recieved - x.lb_given,
                 argument: x.timestamp
             }
         });
-        foodRecievedData.sort((a: { argument: any; }, b: { argument: any; }) => a.argument - b.argument);
-        console.log(foodRecievedData)
-
-        let foodGivenData = result.map((x: {
-            timestamp: any; lb_recieved: any; lb_given: any; 
-            }, index: any) => {
-            return {
-                value: x.lb_given,
-                argument: x.timestamp
-            }
-        });
-        foodGivenData.sort((a: { argument: any; }, b: { argument: any; }) => a.argument - b.argument);
-        console.log(foodGivenData);
-
-        setRecievedData(foodRecievedData);
-        setGivenData(foodGivenData);
+        chartData.sort((a: { argument: any; }, b: { argument: any; }) => a.argument - b.argument);
+        chartData = chartData.slice(0,5);
+        setData(chartData);
     }
 
     useEffect(() => {
@@ -75,30 +65,44 @@ export default function Stats() {
                 Statistics
             </Typography>
             <Grid container spacing={2} sx={{ paddingLeft: '80px', paddingTop: '30px' }}>
-                <Grid item xs={6}>
+                <Grid item xs={3.7}>
                     <Box sx={{ border: '2px solid #EC701B', borderRadius: 2 }}>
                         <Chart
-                            data={recievedData}
+                            data={data}
                             height={400}
                         >
                             <ArgumentAxis/>
                             <ValueAxis/>
-                            <SplineSeries valueField="value" argumentField="argument" color="#FF9600"/>
-                            <Title text="Food Received (in lbs)" />
+                            <SplineSeries valueField="val_1" argumentField="argument" color="#FF9600"/>
+                            <Title text="Food Received (thousands lbs)" />
                             <Animation />
                         </Chart>
                     </Box>
                 </Grid>
-                <Grid item xs={5.5}>
+                <Grid item xs={3.7}>
                     <Box sx={{ border: '2px solid #EC701B', borderRadius: 2 }}>
                         <Chart
-                            data={givenData}
+                            data={data}
                             height={400}
                         >
                             <ArgumentAxis/>
                             <ValueAxis/>
-                            <SplineSeries valueField="value" argumentField="argument" color="#FF9600"/>
-                            <Title text="Food Donated (in lbs)" />
+                            <SplineSeries valueField="val_2" argumentField="argument" color="#FF9600"/>
+                            <Title text="Food Donated (thousands lbs)" />
+                            <Animation />
+                        </Chart>
+                    </Box>
+                </Grid>
+                <Grid item xs={3.7}>
+                    <Box sx={{ border: '2px solid #EC701B', borderRadius: 2 }}>
+                        <Chart
+                            data={data}
+                            height={400}
+                        >
+                            <ArgumentAxis/>
+                            <ValueAxis/>
+                            <BarSeries valueField="val_3" argumentField="argument" color="#FF9600"/>
+                            <Title text="Food Not Given Out (thousands lbs)" />
                             <Animation />
                         </Chart>
                     </Box>
