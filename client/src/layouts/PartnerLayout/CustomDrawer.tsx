@@ -10,6 +10,7 @@ import MuiDrawer from "@mui/material/Drawer"
 import { useDrawer } from "../../contexts/DrawerProvider"
 import ControllerTab from "./ControllerTab"
 import logo from "../../images/acfb-logo.png"
+import LogOutTab from "./LogOutTab"
 
 const DRAWER_WIDTH = 240
 
@@ -64,6 +65,8 @@ export default function CustomDrawer() {
                 <Tab text="Profile" icon={<Person/>} link="profile"/>
             </List>
             <Box flex={1}/>
+            <Divider/>
+            <LogOutTab/>
             <Divider/>
             <ControllerTab/>
         </Drawer>

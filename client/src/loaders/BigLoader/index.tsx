@@ -1,7 +1,10 @@
 import { Box, Typography } from "@mui/material"
 import logo from "../../images/acfb-logo.png"
 
-export default function BigLoader() {
+type Props = {
+    message?: string
+}
+export default function BigLoader({ message="Loading" }: Props) {
     return (
         <Box sx={{
             m: "32px auto",
@@ -13,7 +16,7 @@ export default function BigLoader() {
             gap: "24px",
         }}>
             <img src={logo} width="250"/>
-            <Typography variant="h3" color="#EC701B">Loading</Typography>
+            <Typography variant="h3" color="#EC701B">{message}</Typography>
             <Box sx={{
                 display: "flex",
                 justifyContent: "center",

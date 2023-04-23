@@ -12,6 +12,6 @@ let analytics;
 
 axios.get('/firebase').then((res) => {
   const firebaseConfig = res.data
-  app = initializeApp(firebaseConfig) 
+  app = initializeApp(firebaseConfig)
   analytics = getAnalytics(app);
 })
