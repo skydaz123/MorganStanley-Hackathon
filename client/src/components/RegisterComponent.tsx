@@ -4,11 +4,13 @@ import { useForm } from "react-hook-form";
 import {Button, Stack, Typography} from "@mui/material";
 import React from "react";
 import Divider from '@mui/material/Divider';
-import GoogleButton from 'react-google-button'
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import axios from "axios";
+import { GEOCODE_KEY } from "../environment"
 
 
 export default function RegisterComponent() {
-    const { control } = useForm({
+    const { control, handleSubmit } = useForm({
         defaultValues: {
             providerName: "",
             email: "",
@@ -18,9 +20,50 @@ export default function RegisterComponent() {
             street: "",
             city: "",
             state: "",
-            zip: ""
+            zip: "",
+            maxCapacity: "",
+            fridgeNumber: ""
         },
         mode: "all"
+    })
+
+    const submit = handleSubmit(values => {
+        //Check that password and confirm password match
+        if(values.password !== values.confirmPassword){
+            return;
+        }
+
+        const auth = getAuth();
+        createUserWithEmailAndPassword(auth, values.email, values.password)
+            .then((userCredential) => {
+            // Signed in 
+            const user = userCredential.user;
+            return user;
+            // ...
+            })
+            .then(async(result) => {
+                let address = `${values.street}, ${values.city}, ${values.state}, ${values.zip}`
+                let query = `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${GEOCODE_KEY}`;
+                console.log(query);
+                let res_loc = await axios.get(query);
+                let coor = res_loc.data.results[0].geometry.location;
+                console.log(address, coor.lat, coor.long, values.zip);
+                let res = await axios.post('http://localhost:8000/firebase/addUser', {
+                    address: address,
+                    lat: coor.lat,
+                    long: coor.lng,
+                    zipcode: values.zip,
+                    email: values.email,
+                    name: values.providerName
+                });
+                console.log(res);
+            })
+            .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(error, errorMessage);
+            // ..
+        });
     })
 
     // MULTILINE IS FOR ADDING NOTES AND ROWS
@@ -45,7 +88,9 @@ export default function RegisterComponent() {
                 <FormField id="city" control={control} placeholder="City"/>
                 <FormField id="state" control={control} placeholder="State/Province"/>
                 <FormField id="zip" control={control} placeholder="Zip/Postal Code"/>
-                <Button variant="outlined" sx={{
+                <FormField id="maxCapacity" control={control} label="Please enter the max capacity of food your establishment can hold (in lbs)" separateLabel/>
+                <FormField id="fridgeNumber" control={control} label="Please enter the number of fridges your establishment contains" separateLabel/>
+                <Button variant="outlined" onClick={submit} sx={{
                     border: '3px solid #EC701B !important',
                     '&:hover': {
                         border: '3px solid #EC701B !important',
@@ -70,9 +115,6 @@ export default function RegisterComponent() {
                 Already have an account? <a href="">Sign in!</a>
             </Typography>
             <Divider sx={{ borderColor: '#EC701B', marginBottom: '8px', borderWidth:'0.5px' }}/>
-            <GoogleButton
-                onClick={() => { console.log('Google button clicked') }}
-            />
         </Box>
     )
 }

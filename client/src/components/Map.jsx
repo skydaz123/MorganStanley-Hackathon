@@ -32,6 +32,7 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
+import axios from 'axios';
 
 //drawer for hamburger on side
 import MapDrawer from './MapDrawer';
@@ -74,14 +75,14 @@ const bounds = L.latLngBounds(southWest, northEast);
 var maps = null;
 var routing = null;
 var line = null;
-const locations = [
-  {lat: 33.7671923, lng: -84.40537119999999},
-  {lat: 33.79994, lng: -84.42485099999999},
-  {lat: 33.7749219, lng: -84.2929674},
-  {lat: 33.627911, lng: -84.4715296},
-  {lat: 33.78034239999999, lng: -84.410242},
-  {lat: 33.7485041, lng: -84.3365784},
-];
+// const locations = [
+//   {lat: 33.7671923, lng: -84.40537119999999},
+//   {lat: 33.79994, lng: -84.42485099999999},
+//   {lat: 33.7749219, lng: -84.2929674},
+//   {lat: 33.627911, lng: -84.4715296},
+//   {lat: 33.78034239999999, lng: -84.410242},
+//   {lat: 33.7485041, lng: -84.3365784},
+// ];
 
 
 function generateGraphData(location) {
@@ -105,6 +106,13 @@ export default function Map() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+  const [locations, setLocations] = useState([]);
+  useEffect(() => {
+    axios.get('http://localhost:8000/firebase/markers')
+      .then((res) => {
+        setLocations(res.data);
+    })
+  }, [])
 
     function MapC() {
       const map = useMap();
@@ -113,69 +121,70 @@ export default function Map() {
       map.removeControl(map.zoomControl);
       map.attributionControl.setPrefix('');
       var markers = [];
+      
 
-      const locations = [
-        {
-          name: '466 Northside Dr NW, Atlanta, GA 30318',
-          lat: 33.7671923,
-          lng: -84.40537119999999,
-          lastDeliveryDate: '2023-04-15',
-          dailyData: {
-            storageQuantity: calculateStorageQuantity('2023-04-15'),
-            lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
-          },
-        },
-        {
-          name: '1122A Old Chattahoochee Ave NW # A, Atlanta, GA 30318',
-          lat: 33.79994,
-          lng: -84.42485099999999,
-          lastDeliveryDate: '2023-04-12',
-          dailyData: {
-            storageQuantity: calculateStorageQuantity('2023-04-12'),
-            lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
-          },
-        },
-        {
-          name: '246 Sycamore St, Decatur, GA 30030',
-          lat: 33.7749219,
-          lng: -84.2929674,
-          lastDeliveryDate: '2023-04-10',
-          dailyData: {
-            storageQuantity: calculateStorageQuantity('2023-04-10'),
-            lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
-          },
-        },
-        {
-          name: '2514 W Point Ave, Atlanta, GA 30337',
-          lat: 33.627911,
-          lng: -84.4715296,
-          lastDeliveryDate: '2023-04-18',
-          dailyData: {
-            storageQuantity: calculateStorageQuantity('2023-04-18'),
-            lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
-          },
-        },
-        {
-          name: '921 Howell Mill Rd NW, Atlanta, GA 30318',
-          lat: 33.78034239999999,
-          lng: -84.410242,
-          lastDeliveryDate: '2023-04-17',
-          dailyData: {
-            storageQuantity: calculateStorageQuantity('2023-04-17'),
-            lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
-          },
-        },
-        {
-          name: '1560 Memorial Dr SE, Atlanta, GA 30317',
-          lat: 33.7485041,
-          lng: -84.3365784,
-          lastDeliveryDate: '2023-04-20',
-          dailyData: {
-            storageQuantity: calculateStorageQuantity('2023-04-20'),
-            lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
-          },
-        },
-      ];
+      // const locations = [
+      //   {
+      //     name: '466 Northside Dr NW, Atlanta, GA 30318',
+      //     lat: 33.7671923,
+      //     lng: -84.40537119999999,
+      //     lastDeliveryDate: '2023-04-15',
+      //     dailyData: {
+      //       storageQuantity: calculateStorageQuantity('2023-04-15'),
+      //       lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
+      //     },
+      //   },
+      //   {
+      //     name: '1122A Old Chattahoochee Ave NW # A, Atlanta, GA 30318',
+      //     lat: 33.79994,
+      //     lng: -84.42485099999999,
+      //     lastDeliveryDate: '2023-04-12',
+      //     dailyData: {
+      //       storageQuantity: calculateStorageQuantity('2023-04-12'),
+      //       lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
+      //     },
+      //   },
+      //   {
+      //     name: '246 Sycamore St, Decatur, GA 30030',
+      //     lat: 33.7749219,
+      //     lng: -84.2929674,
+      //     lastDeliveryDate: '2023-04-10',
+      //     dailyData: {
+      //       storageQuantity: calculateStorageQuantity('2023-04-10'),
+      //       lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
+      //     },
+      //   },
+      //   {
+      //     name: '2514 W Point Ave, Atlanta, GA 30337',
+      //     lat: 33.627911,
+      //     lng: -84.4715296,
+      //     lastDeliveryDate: '2023-04-18',
+      //     dailyData: {
+      //       storageQuantity: calculateStorageQuantity('2023-04-18'),
+      //       lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
+      //     },
+      //   },
+      //   {
+      //     name: '921 Howell Mill Rd NW, Atlanta, GA 30318',
+      //     lat: 33.78034239999999,
+      //     lng: -84.410242,
+      //     lastDeliveryDate: '2023-04-17',
+      //     dailyData: {
+      //       storageQuantity: calculateStorageQuantity('2023-04-17'),
+      //       lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
+      //     },
+      //   },
+      //   {
+      //     name: '1560 Memorial Dr SE, Atlanta, GA 30317',
+      //     lat: 33.7485041,
+      //     lng: -84.3365784,
+      //     lastDeliveryDate: '2023-04-20',
+      //     dailyData: {
+      //       storageQuantity: calculateStorageQuantity('2023-04-20'),
+      //       lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
+      //     },
+      //   },
+      // ];
 
        //has all of the distances from point a to all other points. Each row is a unique location, and its column is the endpoint.
    const [distanceMatrix, setDistanceMatrix] = useState([]);
@@ -249,7 +258,8 @@ export default function Map() {
       useEffect(() => {
         console.log("useeffect");
         locations.forEach((loc) => {
-          const marker = L.marker([loc.lat, loc.lng], { icon: myIcon }).addTo(map);
+          console.log(loc);
+          const marker = L.marker([loc.lat, loc.long], { icon: myIcon }).addTo(map);
           //marker.bindPopup("Hello World!").openPopup();
           // Attach click event handler for marker to open modal
           marker.on('click', () => handleOpenModal(loc));
