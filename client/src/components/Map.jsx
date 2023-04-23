@@ -1,5 +1,6 @@
 import AddIcon from '@mui/icons-material/Add';
 import GpsFixedIcon from '@mui/icons-material/GpsFixed';
+import MenuIcon from '@mui/icons-material/Menu';
 import RemoveIcon from '@mui/icons-material/Remove';
 import {
   IconButton,
@@ -7,8 +8,7 @@ import {
   Modal,
   List,
   ListItem,
-  ListItemText,
-  Button,
+  ListItemText
 } from '@mui/material'; // Import Modal here
 import Stack from '@mui/material/Stack';
 import L, { Icon } from 'leaflet';
@@ -23,6 +23,16 @@ import * as turf from '@turf/turf';
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import SearchBar from './SearchBar';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+} from 'recharts';
+import axios from 'axios';
 
 //drawer for hamburger on side
 import MapDrawer from './MapDrawer';
@@ -34,38 +44,55 @@ import 'leaflet.polyline.snakeanim';
 //routing api
 require('leaflet-routing-machine');
 
-
 const myIcon = new Icon({
     iconUrl: markerIcon,
     iconSize: [25, 41],
     iconAnchor: [12, 41],
 });
 
+function calculateStorageQuantity(lastDeliveryDate) {
+  const currentDate = new Date();
+  const lastDelivery = new Date(lastDeliveryDate);
+  const daysSinceLastDelivery = Math.floor((currentDate - lastDelivery) / (1000 * 60 * 60 * 24));
+
+  const initialStorageQuantity = 150;
+  const dailyConsumptionRate = 10;
+
+  const currentStorageQuantity = initialStorageQuantity - (daysSinceLastDelivery * dailyConsumptionRate);
+
+  // If the storage quantity falls below 0, set it to 0
+  return currentStorageQuantity > 0 ? currentStorageQuantity : 0;
+}
+
 const mockDailyData = {
-  storageRemaining: 75, // %
-  distances: [
-    { partner: 'Location A', distance: 5 }, // km
-    { partner: 'Location B', distance: 7 }, // km
-    { partner: 'Location C', distance: 3 }, // km
-  ],
-  foodShipmentRequests: [1, 0, 1, 1, 0], // last 5 days (1 if request that day, 0 otherwise)
+  storageQuantity: 150, // Quantity
+  lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'], // Dates for when food was last requested
 };
 
 const southWest = L.latLng(-90, -180);
 const northEast = L.latLng(90, 180);
 const bounds = L.latLngBounds(southWest, northEast);
-
 var maps = null;
 var routing = null;
 var line = null;
-const locations = [
-  {lat: 33.7671923, lng: -84.40537119999999},
-  {lat: 33.79994, lng: -84.42485099999999},
-  {lat: 33.7749219, lng: -84.2929674},
-  {lat: 33.627911, lng: -84.4715296},
-  {lat: 33.78034239999999, lng: -84.410242},
-  {lat: 33.7485041, lng: -84.3365784},
-];
+// const locations = [
+//   {lat: 33.7671923, lng: -84.40537119999999},
+//   {lat: 33.79994, lng: -84.42485099999999},
+//   {lat: 33.7749219, lng: -84.2929674},
+//   {lat: 33.627911, lng: -84.4715296},
+//   {lat: 33.78034239999999, lng: -84.410242},
+//   {lat: 33.7485041, lng: -84.3365784},
+// ];
+
+
+function generateGraphData(location) {
+  const data = location.dailyData.lastRequestedDates.map((date) => {
+    const storageQuantity = calculateStorageQuantity(date);
+    return { date, storageQuantity };
+  });
+
+  return data;
+}
 
 export default function Map() {
   const [check, setCheck] = useState(false);
@@ -79,6 +106,13 @@ export default function Map() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+  const [locations, setLocations] = useState([]);
+  useEffect(() => {
+    axios.get('http://localhost:8000/firebase/markers')
+      .then((res) => {
+        setLocations(res.data);
+    })
+  }, [])
 
     function MapC() {
       const map = useMap();
@@ -87,54 +121,79 @@ export default function Map() {
       map.removeControl(map.zoomControl);
       map.attributionControl.setPrefix('');
       var markers = [];
+      
 
-      const locations = [
-        {
-          name: '466 Northside Dr NW, Atlanta, GA 30318',
-          lat: 33.7671923,
-          lng: -84.40537119999999,
-          dailyData: mockDailyData,
-        },
-        {
-          name: '1122A Old Chattahoochee Ave NW # A, Atlanta, GA 30318',
-          lat: 33.79994,
-          lng: -84.42485099999999,
-          dailyData: mockDailyData,
-        },
-        {
-          name: '246 Sycamore St, Decatur, GA 30030',
-          lat: 33.7749219,
-          lng: -84.2929674,
-          dailyData: mockDailyData,
-        },
-        {
-          name: '2514 W Point Ave, Atlanta, GA 30337',
-          lat: 33.627911,
-          lng: -84.4715296,
-          dailyData: mockDailyData,
-        },
-        {
-          name: '921 Howell Mill Rd NW, Atlanta, GA 30318',
-          lat: 33.78034239999999,
-          lng: -84.410242,
-          dailyData: mockDailyData,
-        },
-        {
-          name: '1560 Memorial Dr SE, Atlanta, GA 30317',
-          lat: 33.7485041,
-          lng: -84.3365784,
-          dailyData: mockDailyData,
-        },
-      ];
+      // const locations = [
+      //   {
+      //     name: '466 Northside Dr NW, Atlanta, GA 30318',
+      //     lat: 33.7671923,
+      //     lng: -84.40537119999999,
+      //     lastDeliveryDate: '2023-04-15',
+      //     dailyData: {
+      //       storageQuantity: calculateStorageQuantity('2023-04-15'),
+      //       lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
+      //     },
+      //   },
+      //   {
+      //     name: '1122A Old Chattahoochee Ave NW # A, Atlanta, GA 30318',
+      //     lat: 33.79994,
+      //     lng: -84.42485099999999,
+      //     lastDeliveryDate: '2023-04-12',
+      //     dailyData: {
+      //       storageQuantity: calculateStorageQuantity('2023-04-12'),
+      //       lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
+      //     },
+      //   },
+      //   {
+      //     name: '246 Sycamore St, Decatur, GA 30030',
+      //     lat: 33.7749219,
+      //     lng: -84.2929674,
+      //     lastDeliveryDate: '2023-04-10',
+      //     dailyData: {
+      //       storageQuantity: calculateStorageQuantity('2023-04-10'),
+      //       lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
+      //     },
+      //   },
+      //   {
+      //     name: '2514 W Point Ave, Atlanta, GA 30337',
+      //     lat: 33.627911,
+      //     lng: -84.4715296,
+      //     lastDeliveryDate: '2023-04-18',
+      //     dailyData: {
+      //       storageQuantity: calculateStorageQuantity('2023-04-18'),
+      //       lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
+      //     },
+      //   },
+      //   {
+      //     name: '921 Howell Mill Rd NW, Atlanta, GA 30318',
+      //     lat: 33.78034239999999,
+      //     lng: -84.410242,
+      //     lastDeliveryDate: '2023-04-17',
+      //     dailyData: {
+      //       storageQuantity: calculateStorageQuantity('2023-04-17'),
+      //       lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
+      //     },
+      //   },
+      //   {
+      //     name: '1560 Memorial Dr SE, Atlanta, GA 30317',
+      //     lat: 33.7485041,
+      //     lng: -84.3365784,
+      //     lastDeliveryDate: '2023-04-20',
+      //     dailyData: {
+      //       storageQuantity: calculateStorageQuantity('2023-04-20'),
+      //       lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
+      //     },
+      //   },
+      // ];
 
        //has all of the distances from point a to all other points. Each row is a unique location, and its column is the endpoint.
-   var edges = [];
+   const [distanceMatrix, setDistanceMatrix] = useState([]);
 
 
-    const calculateDistances = async () => {
+   const calculateDistances = async () => {
        const matrix = [];
        const controls = {};
-      
+    
        const removeControl = (origin, destination) => {
            const key = `${origin.lat},${origin.lng}_${destination.lat},${destination.lng}`;
            const control = controls[key];
@@ -166,7 +225,7 @@ export default function Map() {
                routeWhileDragging: false,
                showAlternatives: false,
                fitSelectedRoutes: false,
-             });
+             });//.addTo(map);
             
              controls[key] = control;
             
@@ -183,32 +242,46 @@ export default function Map() {
          }
          matrix.push(row);
        }
-       return matrix;
-    };
+       setDistanceMatrix(matrix);
 
-    locations.forEach((loc) => {
-      const marker = L.marker([loc.lat, loc.lng], { icon: myIcon }).addTo(map);
-      marker.on('click', () => handleOpenModal(loc));
-      markers.push(marker);
-    });
 
-      map.pm.addControls({
-          position: 'topright',
-          drawPolygon: true,
-          drawText : false,
-          drawCircle: false,
-          drawCircleMarker: false,
-          drawMarker: false,
-          drawPolyline: false,
-          drawRectangle: false,
-          editMode: false,
-          dragMode: false,
-          cutPolygon: false,
-          removalMode: false,
-          rotateMode: false,
-          merge: false,
-          delete : false
+     };
+    
+    
+    
+   useEffect(() => {
+       calculateDistances();
+      
+   }, []);
+
+    
+      useEffect(() => {
+        console.log("useeffect");
+        locations.forEach((loc) => {
+          console.log(loc);
+          const marker = L.marker([loc.lat, loc.long], { icon: myIcon }).addTo(map);
+          //marker.bindPopup("Hello World!").openPopup();
+          // Attach click event handler for marker to open modal
+          marker.on('click', () => handleOpenModal(loc));
+        });
       });
+      map.pm.addControls({
+        position: 'topright',
+        drawPolygon: true,
+        drawText : false,
+        drawCircle: false,
+        drawCircleMarker: false,
+        drawMarker: false,
+        drawPolyline: false,
+        drawRectangle: false,
+        editMode: false,
+        dragMode: false,
+        cutPolygon: false,
+        removalMode: false,
+        rotateMode: false,
+        merge: false,
+        delete : false
+    });
 
       map.on('pm:create', (e) => {
         const layer = e.layer;
@@ -224,21 +297,10 @@ export default function Map() {
         });
         map.removeLayer(layer);
       });
-
-      async function test() {
-        console.log("clccked me")
-        let result = await calculateDistances();
-        console.log(result);
-      }
-
-      return (
-        <div>
-          <Button onClick={test}>Click me</Button>
-        </div>
-      );;
+      return null;
     }
     
-
+    
     function handleZoomIn() {
       console.log("Zoom in pressed");
       maps.zoomIn();
@@ -249,6 +311,7 @@ export default function Map() {
       maps.zoomOut();
     }
 
+    
     function handleDraw() {
       if(!check)
       {
@@ -293,51 +356,71 @@ export default function Map() {
       }
       setCheck(!check);
     }
+
     return (
         <div>
-          <Modal open={isModalOpen} onClose={handleCloseModal}>
-        {selectedLocation ? (
-          <div style={{ padding: '20px', backgroundColor: 'white' }}>
-            <List>
-              <h2>{selectedLocation.name}</h2>
-              <ListItem>
-                <ListItemText primary={`Storage Remaining: ${selectedLocation.dailyData.storageRemaining}%`} />
-              </ListItem>
-              <ListItem>
-                <ListItemText primary="Distances to Other Partners:" />
-                <List>
-                  {selectedLocation.dailyData.distances.map((distance, index) => (
-                    <ListItem key={index}>
-                      <ListItemText primary={`${distance.partner}: ${distance.distance} km`} />
+            <Modal open={isModalOpen} onClose={handleCloseModal}>
+              {selectedLocation ? (
+                <div style={{ padding: '20px', backgroundColor: 'white', color: 'orange' }}>
+                  <List>
+                    <h2>{selectedLocation.name}</h2>
+                    <ListItem>
+                      <ListItemText primary={`Storage Quantity: ${selectedLocation.dailyData.storageQuantity}`} />
                     </ListItem>
-                  ))}
-                </List>
-              </ListItem>
-              <ListItem>
-                <ListItemText primary="Food Shipment Requests (Last 5 Days):" />
-                <List>
-                  {selectedLocation.dailyData.foodShipmentRequests.map((request, index) => (
-                    <ListItem key={index}>
-                      <ListItemText primary={request ? 'Requested' : 'Not Requested'} />
+                    <ListItem>
+                      <ListItemText primary="Food Shipment Requests (Last Requested Dates):" />
+                      <List>
+                        {selectedLocation.dailyData.lastRequestedDates.map((date, index) => (
+                          <ListItem key={index}>
+                            <ListItemText primary={date} />
+                          </ListItem>
+                        ))}
+                      </List>
                     </ListItem>
-                  ))}
-                </List>
-              </ListItem>
-            </List>
-            <button onClick={handleCloseModal}>Close</button>
-          </div>
-        ) : (
-          <div></div> // Fallback empty element
-        )}
-          </Modal>
+                  </List>
+                  <LineChart
+                    width={600}
+                    height={300}
+                    data={generateGraphData(selectedLocation)}
+                    margin={{
+                      top: 5,
+                      right: 30,
+                      left: 20,
+                      bottom: 5,
+                    }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="storageQuantity"
+                      stroke="#8884d8"
+                      activeDot={{ r: 8 }}
+                    />
+                  </LineChart>
+                  <button onClick={handleCloseModal} style={{ backgroundColor: 'orange', color: 'white' }}>Close</button>
+                </div>
+              ) : (
+                <div></div> // Fallback empty element
+              )}
+            </Modal>
+
             <div style={{ display: 'flex', justifyContent: 'start' }}>
-                <Typography style={{ position: 'absolute', zIndex: '1000', fontSize: '40px', color: 'Red', marginTop: '1.25%'  }}>
-                    <Link to='/'
-                          style={{ color: 'inherit', textDecoration: 'none' }}
-                    >
-                        Name
-                    </Link>
-                </Typography>
+              <Typography style={{
+                position: 'absolute',
+                zIndex: '1000',
+                fontSize: '40px',
+                color: 'orange',
+                marginTop: '1.25%',
+                textShadow: '1px 1px 0px black, -1px 1px 0px black, 1px -1px 0px black, -1px -1px 0px black'  // Add text-shadow here
+            }}>
+              <Link to='/' style={{ color: 'inherit', textDecoration: 'none' }}>
+                Name
+              </Link>
+            </Typography>
             </div>
             <div style={{ display: 'flex', justifyContent: 'center'}}>
                 <div style={{ position: 'absolute', zIndex: '1000', marginTop: '2.5%' }}>
@@ -360,6 +443,7 @@ export default function Map() {
                   attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
                 />
                 <MapC/>
+                
             </MapContainer>
             <div style={{ position: 'absolute', bottom: '20px', right: '20px', zIndex: '1000' }}>
                 <Stack spacing={2}>
