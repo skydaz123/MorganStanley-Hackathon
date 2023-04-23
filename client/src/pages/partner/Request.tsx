@@ -1,5 +1,5 @@
 import useHideSlidingWindowOnLoad from "../../hooks/useHideSlidingWindowOnLoad"
-import { Box, LinearProgress, Stack, Typography } from "@mui/material"
+import { Box, Stack, Typography } from "@mui/material"
 import { z } from "zod"
 import React, { useState } from "react"
 import { useForm } from "react-hook-form"
@@ -8,21 +8,19 @@ import CustomButton from "../../components/CustomButton"
 import { useAddReportMutation } from "../../redux/apis/localApi/firebaseApi"
 import { useSelector } from "react-redux"
 import { getAuthSlice } from "../../redux/store"
-
-const inputSchema = z.number()
-    .positive("Amount needs to be positive")
-    .or(z.string().regex(/\d+/, "Invalid number").transform(Number))
-    .refine((n) => n >= 0)
+import { zodResolver } from "@hookform/resolvers/zod"
+import positiveNumberSchema from "../../schemas/positiveNumberSchema"
+import LoadingBar from "../../components/LoadingBar"
 
 const formSchema = z.object({
-    foodReceived: inputSchema,
-    foodGiven: inputSchema
+    foodReceived: positiveNumberSchema,
+    foodGiven: positiveNumberSchema,
 })
 
 export default function Request() {
     useHideSlidingWindowOnLoad()
 
-    const state = useSelector(getAuthSlice)
+    const { user } = useSelector(getAuthSlice)
     const [loading, setLoading] = useState(false)
     const [addReport] = useAddReportMutation()
 
@@ -31,38 +29,31 @@ export default function Request() {
             foodReceived: "",
             foodDonated: "",
         },
-        //resolver: zodResolver(formSchema),
+        resolver: zodResolver(formSchema),
         mode: "all",
     })
 
     const submit = handleSubmit(async values => {
-        setLoading(true)
-        console.log("State is", state);
-        const {foodReceived, foodDonated} = values;
-        let lb_recieved = parseInt(foodReceived)
-        let lb_given = parseInt(foodDonated);
+        const {
+            foodReceived,
+            foodDonated
+        } = values
 
-        // @ts-ignore
-        let email: any = state.user.email;
+        try {
+            setLoading(true)
 
-        try{
-            setLoading(true);
-            const result = await addReport({
-                lb_recieved,
-                lb_given,
-                email,
-
+            await addReport({
+                lb_recieved: Number(foodReceived),
+                lb_given: Number(foodDonated),
+                email: user?.email ?? "[UNKNOWN]",
             }).unwrap()
 
-        }
-        catch (error) {
+            setLoading(false)
+            reset()
+        } catch (error) {
             console.error(error)
+            setLoading(false)
         }
-
-        setLoading(false)
-
-        console.log("[ReportComponent]", values)
-        reset()
     })
 
     return (
@@ -77,11 +68,7 @@ export default function Request() {
             <Stack spacing="20px" maxWidth="500px">
                 {
                     loading &&
-                    <LinearProgress sx={{
-                        "& .MuiLinearProgress-bar": {
-                            backgroundColor: "#EC701B"
-                        }
-                    }}/>
+                    <LoadingBar/>
                 }
                 <FormField
                     control={control}
@@ -95,7 +82,6 @@ export default function Request() {
                     label="Enter the amount of food donated (in lbs)"
                     separateLabel
                 />
-
                 <CustomButton variant="outlined" onClick={submit} disabled={loading}>
                     Submit Report
                 </CustomButton>

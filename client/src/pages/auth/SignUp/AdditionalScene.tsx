@@ -9,6 +9,7 @@ import React, { useState } from "react"
 import CustomButton from "../../../components/CustomButton"
 import { useLazyGetAddressInfoQuery } from "../../../redux/apis/mapsApi/geocodeApi"
 import LoadingBar from "../../../components/LoadingBar"
+import positiveNumberSchema from "../../../schemas/positiveNumberSchema"
 
 const formSchema = z.object({
     providerName: z.string()
@@ -23,10 +24,7 @@ const formSchema = z.object({
         .min(1, "State is required"),
     zip: z.string()
         .min(1, "Zip code is required"),
-    maxCapacity: z.number()
-        .positive("Amount needs to be positive")
-        .or(z.string().regex(/\d+/, "Invalid number").transform(Number))
-        .refine((n) => n >= 0),
+    maxCapacity: positiveNumberSchema,
 })
 
 type Props = {

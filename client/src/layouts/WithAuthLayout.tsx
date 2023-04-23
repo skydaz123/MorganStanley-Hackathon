@@ -5,11 +5,12 @@ import { Navigate, Outlet } from "react-router-dom"
 
 type Props = {
     accept?: Role[]
+    acceptAny?: boolean
 }
-export default function WithAuthLayout({ accept=[] }: Props) {
+export default function WithAuthLayout({ accept=[], acceptAny }: Props) {
     const { isLoggedIn, user } = useSelector(getAuthSlice)
 
-    if (!isLoggedIn || !user || !accept?.includes(user.role))
+    if (!isLoggedIn || !user || (!acceptAny && !accept?.includes(user.role)))
         return <Navigate to="/auth" replace/>
 
     return <Outlet/>

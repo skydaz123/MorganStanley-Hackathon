@@ -7,6 +7,7 @@ import partnerRoutes from "./routes/partner-routes"
 import NotFound from "./pages/NotFound"
 import authRoutes from "./routes/auth-routes"
 import Role from "./enums/role"
+import BackupLogout from "./pages/auth/BackupLogout"
 
 const Home = lazy(() => import("./pages/Home"))
 
@@ -22,6 +23,10 @@ const router = createBrowserRouter(
 
             <Route path="map" element={<WithAuthLayout accept={[Role.Distributor]}/>}>
                 <Route path="" element={<Map/>}/>
+            </Route>
+
+            <Route path="logout" element={<WithAuthLayout acceptAny/>}>
+                <Route path="" element={<BackupLogout/>}/>
             </Route>
 
             {partnerRoutes}
