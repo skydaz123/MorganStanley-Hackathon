@@ -75,6 +75,8 @@ const bounds = L.latLngBounds(southWest, northEast);
 var maps = null;
 var routing = null;
 var line = null;
+var availableLocations = [];	
+var markers = [];
 // const locations = [
 //   {lat: 33.7671923, lng: -84.40537119999999},
 //   {lat: 33.79994, lng: -84.42485099999999},
@@ -95,9 +97,11 @@ function generateGraphData(location) {
 }
 
 export default function Map() {
+  
   const [check, setCheck] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [block, setBlock] = useState(false);
 
   const handleOpenModal = (location) => {
     setSelectedLocation(location);
@@ -120,150 +124,108 @@ export default function Map() {
       maps.flyTo([33.753746,-84.386330], 12)
       map.removeControl(map.zoomControl);
       map.attributionControl.setPrefix('');
-      var markers = [];
       
-
-      // const locations = [
-      //   {
-      //     name: '466 Northside Dr NW, Atlanta, GA 30318',
-      //     lat: 33.7671923,
-      //     lng: -84.40537119999999,
-      //     lastDeliveryDate: '2023-04-15',
-      //     dailyData: {
-      //       storageQuantity: calculateStorageQuantity('2023-04-15'),
-      //       lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
-      //     },
-      //   },
-      //   {
-      //     name: '1122A Old Chattahoochee Ave NW # A, Atlanta, GA 30318',
-      //     lat: 33.79994,
-      //     lng: -84.42485099999999,
-      //     lastDeliveryDate: '2023-04-12',
-      //     dailyData: {
-      //       storageQuantity: calculateStorageQuantity('2023-04-12'),
-      //       lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
-      //     },
-      //   },
-      //   {
-      //     name: '246 Sycamore St, Decatur, GA 30030',
-      //     lat: 33.7749219,
-      //     lng: -84.2929674,
-      //     lastDeliveryDate: '2023-04-10',
-      //     dailyData: {
-      //       storageQuantity: calculateStorageQuantity('2023-04-10'),
-      //       lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
-      //     },
-      //   },
-      //   {
-      //     name: '2514 W Point Ave, Atlanta, GA 30337',
-      //     lat: 33.627911,
-      //     lng: -84.4715296,
-      //     lastDeliveryDate: '2023-04-18',
-      //     dailyData: {
-      //       storageQuantity: calculateStorageQuantity('2023-04-18'),
-      //       lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
-      //     },
-      //   },
-      //   {
-      //     name: '921 Howell Mill Rd NW, Atlanta, GA 30318',
-      //     lat: 33.78034239999999,
-      //     lng: -84.410242,
-      //     lastDeliveryDate: '2023-04-17',
-      //     dailyData: {
-      //       storageQuantity: calculateStorageQuantity('2023-04-17'),
-      //       lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
-      //     },
-      //   },
-      //   {
-      //     name: '1560 Memorial Dr SE, Atlanta, GA 30317',
-      //     lat: 33.7485041,
-      //     lng: -84.3365784,
-      //     lastDeliveryDate: '2023-04-20',
-      //     dailyData: {
-      //       storageQuantity: calculateStorageQuantity('2023-04-20'),
-      //       lastRequestedDates: ['2023-04-18', '2023-04-15', '2023-04-14'],
-      //     },
-      //   },
-      // ];
-
-       //has all of the distances from point a to all other points. Each row is a unique location, and its column is the endpoint.
+   
+   //has all of the distances from point a to all other points. Each row is a unique location, and its column is the endpoint.
    const [distanceMatrix, setDistanceMatrix] = useState([]);
 
 
    const calculateDistances = async () => {
-       const matrix = [];
-       const controls = {};
-    
-       const removeControl = (origin, destination) => {
-           const key = `${origin.lat},${origin.lng}_${destination.lat},${destination.lng}`;
-           const control = controls[key];
-           if (control) {
-             control.remove();
-             delete controls[key];
-           }
-         };
-    
-       for (const origin of locations) {
-         const row = [];
-         for (const destination of locations) {
-           if (origin === destination) {
-             row.push(0);
-             continue;
-           }
-    
-           const key = `${origin.lat},${origin.lng}_${destination.lat},${destination.lng}`;
-           const control = L.Routing.control({
-               waypoints: [
-                 L.latLng(origin.lat, origin.lng),
-                 L.latLng(destination.lat, destination.lng),
-               ],
-               lineOptions: {
-                 styles: [{ color: 'transparent' }],
-               },
-               createMarker: () => null,
-               addWaypoints: false,
-               routeWhileDragging: false,
-               showAlternatives: false,
-               fitSelectedRoutes: false,
-             });//.addTo(map);
-            
-             controls[key] = control;
-            
-             const promise = new Promise((resolve) => {
-               control.on('routesfound', (e) => {
-                 const distance = e.routes[0].summary.totalDistance;
-                 resolve(distance);
-               });
-             });
-            
-             const distance = await promise;
-           row.push(distance);
-           removeControl(origin, destination);
-         }
-         matrix.push(row);
-       }
-       setDistanceMatrix(matrix);
-
-
-     };
-    
+    const matrix = [];
+    const cache = {};
+    const controls = {};
+    const removeControl = (origin, destination) => {
+      const key = `${origin.lat},${origin.lng}_${destination.lat},${destination.lng}`;
+      const control = controls[key];
+      if (control) {
+        control.remove();
+        delete controls[key];
+      }
+    };
+  
+    for (let i = 0; i < locations.length; i++) {
+      const origin = locations[i];
+      const row = [];
+  
+      for (let j = 0; j < locations.length; j++) {
+        const destination = locations[j];
+  
+        if (i === j) {
+          row.push(0);
+          continue;
+        }
+  
+        const key = `${origin.lat},${origin.lng}_${destination.lat},${destination.lng}`;
+        //if cached, 
+        //do not send api call
+        //reduces time needed by nearly 2
+        if (key in cache) {
+          // Use cached value
+          row.push(cache[key]);
+          continue;
+        }
+  
+        const control = L.Routing.control({
+          waypoints: [
+            L.latLng(origin.lat, origin.lng),
+            L.latLng(destination.lat, destination.lng),
+          ],
+          lineOptions: {
+            styles: [{ color: 'transparent' }],
+          },
+          createMarker: () => null,
+          addWaypoints: false,
+          routeWhileDragging: false,
+          showAlternatives: false,
+          fitSelectedRoutes: false,
+        }).addTo(map);
+  
+        control ._container.style.display = 'none';
+        controls[key] = control;
+  
+        const promise = new Promise((resolve) => {
+          control.on('routesfound', (e) => {
+            const distance = e.routes[0].summary.totalDistance;
+            resolve(distance);
+          });
+        });
+  
+        const distance = await promise;
+        cache[key] = distance;
+        row.push(distance);
+        removeControl(origin, destination);
+      }
+  
+      matrix.push(row);
+    }
+  
+    setDistanceMatrix(matrix);
+  };
+  
     
     
    useEffect(() => {
        calculateDistances();
-      
    }, []);
 
+   useEffect(() => {
+    console.log('matrix', distanceMatrix);
+  }, [distanceMatrix]);
+
     
-      useEffect(() => {
-        console.log("useeffect");
-        locations.forEach((loc) => {
-          console.log(loc);
-          const marker = L.marker([loc.lat, loc.lng], { icon: myIcon }).addTo(map);
-          //marker.bindPopup("Hello World!").openPopup();
-          // Attach click event handler for marker to open modal
-          marker.on('click', () => handleOpenModal(loc));
-        });
+   if(!block && locations) {	
+    console.log(locations);	
+    availableLocations = locations;	
+ }	
+      availableLocations.forEach((loc) => {	
+        console.log("Length is " + availableLocations.length)	
+        const marker = L.marker([loc.lat, loc.lng], { icon: myIcon }).addTo(map);	
+        //marker.bindPopup("Hello World!").openPopup();	
+        // Attach click event handler for marker to open modal	
+        marker.on('click', () => handleOpenModal(loc));	
+        markers.push(marker)	
+        //availableLocations[loc.name] = {lat: marker.getLatLng().lat, lng: marker.getLatLng().lng};	
+        //console.log("available is " + availableLocations[loc.name].lat);	
       });
       map.pm.addControls({
         position: 'topright',
@@ -285,6 +247,8 @@ export default function Map() {
 
       map.on('pm:create', (e) => {
         const layer = e.layer;
+        var temp = markers;	
+        var itemToDelete = [];
         markers.forEach(mark => {
           if (!(mark instanceof L.Marker)) 
             return;
@@ -292,10 +256,34 @@ export default function Map() {
           const point = turf.point([latlng.lng, latlng.lat]);
           const isInside = turf.booleanPointInPolygon(point, layer.toGeoJSON());
           if (!isInside) {
+            //remove from temp	
+            itemToDelete.push(mark);
             map.removeLayer(mark);
           }
         });
         map.removeLayer(layer);
+        let index = 0;	
+        for(let i = 0; index < itemToDelete.length; i++)	
+        {	
+          console.log(temp[i].getLatLng().lat);	
+          console.log(itemToDelete[index].getLatLng().lat)	
+          if(temp[i].getLatLng().lat === itemToDelete[index].getLatLng().lat && temp[i].getLatLng().lng === itemToDelete[index].getLatLng().lng)	
+          {	
+            console.log("GOT IN:")	
+            temp.splice(i, 1);	
+            i = -1;	
+            index++;	
+          }	
+        }	
+        markers = temp;	
+        console.log("before addition" + availableLocations);	
+        let tempArr = [];	
+        for(let i = 0; i < markers.length; i++)	
+        {	
+          tempArr.push({lat: markers[i].getLatLng().lat, lng: markers[i].getLatLng().lng});	
+        }	
+        availableLocations = tempArr;	
+        console.log("Markers length is " + availableLocations.length)
       });
       return null;
     }
@@ -319,7 +307,7 @@ export default function Map() {
           console.log("Drawing routes");
           routing = L.Routing.control({
             createMarker: function() { return null; } ,
-            
+            waypoints: availableLocations,
             //showAlternatives: false,
     
             //Snap waypoints to nearest road and will not include walk up route
@@ -344,7 +332,14 @@ export default function Map() {
             // });
           });
           routing ._container.style.display = "none" // <--- remove control
-          routing.setWaypoints(locations);
+          console.log("length is " + markers.length);	
+          console.log(locations);	
+          console.log(availableLocations);	
+          if(!block) {;	
+            setBlock(!block);	
+            console.log("It is " + availableLocations);	
+          }	
+          routing.setWaypoints(availableLocations);
         }
         else {
           line.setStyle({opacity: 1});

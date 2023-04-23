@@ -1,12 +1,11 @@
 import * as React from 'react'
 import { useEffect, useMemo } from 'react'
-import { Box, Typography } from "@mui/material"
+import { Box, CircularProgress, Typography } from "@mui/material"
 import useHideSlidingWindowOnLoad from "../../hooks/useHideSlidingWindowOnLoad"
-import { ArgumentAxis, Chart, SplineSeries, Title, ValueAxis, } from '@devexpress/dx-react-chart-material-ui'
+import { ArgumentAxis, BarSeries, Chart, SplineSeries, Title, ValueAxis, } from '@devexpress/dx-react-chart-material-ui'
 import { Animation } from "@devexpress/dx-react-chart"
 import Grid from "@mui/material/Grid"
 import { useGetReportsQuery } from "../../redux/apis/localApi/firebaseApi"
-import BigLoader from "../../loaders/BigLoader"
 
 export default function Stats() {
     useHideSlidingWindowOnLoad()
@@ -19,35 +18,26 @@ export default function Stats() {
         console.error(error)
     }, [isError, error])
 
-    const { receivedData, givenData } = useMemo(() => {
+    const chartData = useMemo(() => {
         if (isFetching || isError || !data)
-            return { receivedData: [], givenData: [] }
+            return []
 
-        const foodRecievedData = data.map(({ lb_recieved, timestamp }) => ({
-            value: lb_recieved,
-            argument: timestamp,
+        const $ = data.map(({ lb_recieved, lb_given, timestamp: argument }) => ({
+            val_1: lb_recieved,
+            val_2: lb_given,
+            val_3: lb_recieved - lb_given,
+            argument,
         }))
-        foodRecievedData.sort((a, b) => a.argument - b.argument)
-        console.log(foodRecievedData)
+        $.sort((a: { argument: any; }, b: { argument: any; }) => a.argument - b.argument)
 
-        const foodGivenData = data.map(({ lb_given, timestamp }) => ({
-            value: lb_given,
-            argument: timestamp,
-        }))
-        foodGivenData.sort((a, b) => a.argument - b.argument)
-        console.log(foodGivenData)
-
-        return {
-            receivedData: foodRecievedData,
-            givenData: foodGivenData
-        }
-    }, [data, isFetching, isError])
+        return $.slice(0, 5)
+    }, [data, isError, isFetching])
 
     if (isFetching)
-        return <BigLoader/>
+        return <CircularProgress/>
 
     if (!data)
-        return <>No data found.</>
+        return <>No data.</>
 
     return (
         <Box>
@@ -62,30 +52,44 @@ export default function Stats() {
                 Statistics
             </Typography>
             <Grid container spacing={2} sx={{ paddingLeft: '80px', paddingTop: '30px' }}>
-                <Grid item xs={6}>
+                <Grid item xs={3.7}>
                     <Box sx={{ border: '2px solid #EC701B', borderRadius: 2 }}>
                         <Chart
-                            data={receivedData}
+                            data={chartData}
                             height={400}
                         >
                             <ArgumentAxis/>
                             <ValueAxis/>
-                            <SplineSeries valueField="value" argumentField="argument" color="#FF9600"/>
-                            <Title text="Food Received (in lbs)"/>
+                            <SplineSeries valueField="val_1" argumentField="argument" color="#FF9600"/>
+                            <Title text="Food Received (thousands lbs)"/>
                             <Animation/>
                         </Chart>
                     </Box>
                 </Grid>
-                <Grid item xs={5.5}>
+                <Grid item xs={3.7}>
                     <Box sx={{ border: '2px solid #EC701B', borderRadius: 2 }}>
                         <Chart
-                            data={givenData}
+                            data={chartData}
                             height={400}
                         >
                             <ArgumentAxis/>
                             <ValueAxis/>
-                            <SplineSeries valueField="value" argumentField="argument" color="#FF9600"/>
-                            <Title text="Food Donated (in lbs)"/>
+                            <SplineSeries valueField="val_2" argumentField="argument" color="#FF9600"/>
+                            <Title text="Food Donated (thousands lbs)"/>
+                            <Animation/>
+                        </Chart>
+                    </Box>
+                </Grid>
+                <Grid item xs={3.7}>
+                    <Box sx={{ border: '2px solid #EC701B', borderRadius: 2 }}>
+                        <Chart
+                            data={chartData}
+                            height={400}
+                        >
+                            <ArgumentAxis/>
+                            <ValueAxis/>
+                            <BarSeries valueField="val_3" argumentField="argument" color="#FF9600"/>
+                            <Title text="Food Not Given Out (thousands lbs)"/>
                             <Animation/>
                         </Chart>
                     </Box>
