@@ -1,9 +1,9 @@
-import * as React from 'react';
-import {Box, Button, Typography} from "@mui/material";
+import * as React from 'react'
+import { Box, Typography } from "@mui/material"
 import useHideSlidingWindowOnLoad from "../../hooks/useHideSlidingWindowOnLoad"
-import logo from "../../images/acfb-logo.png";
-import backdrop from "../../images/random_hackathon_image.jpg";
-import Grid from '@mui/material/Grid';
+import logo from "../../images/acfb-logo.png"
+import backdrop from "../../images/random_hackathon_image.jpg"
+import Grid from '@mui/material/Grid'
 
 export default function Profile() {
     useHideSlidingWindowOnLoad()

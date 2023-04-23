@@ -1,5 +1,5 @@
 import Wrapper from "./Wrapper"
-import { LinearProgress, Link, Stack, Typography } from "@mui/material"
+import { Link, Stack, Typography } from "@mui/material"
 import React, { useState } from "react"
 import { useForm } from "react-hook-form"
 import FormField from "../../components/FormField"
@@ -7,14 +7,13 @@ import Divider from "@mui/material/Divider"
 import CustomButton from "../../components/CustomButton"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useNavigate } from "react-router-dom"
 import { signInWithEmailAndPassword } from "firebase/auth"
 import { auth } from "../../firebase"
 import { useDispatch } from "react-redux"
 import { addToken, register } from "../../redux/slices/authSlice"
 import { useLazyGetUserQuery } from "../../redux/apis/localApi/firebaseApi"
-import Role from "../../enums/role"
 import LoadingBar from "../../components/LoadingBar"
+import useRedirectIfLoggedIn from "../../hooks/useRedirectIfLoggedIn"
 
 const formSchema = z.object({
     email: z.string()
@@ -26,7 +25,8 @@ const formSchema = z.object({
 })
 
 export default function LogIn() {
-    const navigate = useNavigate()
+    useRedirectIfLoggedIn()
+
     const dispatch = useDispatch()
 
     const [getUser] = useLazyGetUserQuery()
@@ -55,28 +55,13 @@ export default function LogIn() {
             const token = await user.getIdToken(true)
             dispatch(addToken(token))
 
-            // remove token from parameter
-            const result = await getUser(token).unwrap()
-
+            const result = await getUser(undefined).unwrap()
             dispatch(register({
                 role: result.role,
                 email: result.email,
                 name: result.name,
                 id: user.uid,
             }))
-
-            switch (result.role) {
-                case Role.Partner:
-                    navigate("/partner")
-                    break
-                case Role.Distributor:
-                    navigate("/map")
-                    break
-                case Role.Unknown:
-                default:
-                    console.error("Invalid role detected")
-                    break
-            }
 
             reset()
         } catch (error) {

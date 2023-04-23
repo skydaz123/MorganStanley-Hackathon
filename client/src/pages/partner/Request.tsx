@@ -3,11 +3,10 @@ import { Box, LinearProgress, Stack, Typography } from "@mui/material"
 import { z } from "zod"
 import React, { useState } from "react"
 import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
 import FormField from "../../components/FormField"
 import CustomButton from "../../components/CustomButton"
 import { useAddReportMutation } from "../../redux/apis/localApi/firebaseApi"
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { getAuthSlice } from "../../redux/store"
 
 const inputSchema = z.number()

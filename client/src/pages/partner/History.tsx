@@ -1,9 +1,9 @@
-import * as React from 'react';
-import { useState, useEffect } from 'react';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { Box, Typography } from "@mui/material";
+import * as React from 'react'
+import { useEffect, useState } from 'react'
+import { DataGrid, GridColDef } from '@mui/x-data-grid'
+import { Box, Typography } from "@mui/material"
 import useHideSlidingWindowOnLoad from "../../hooks/useHideSlidingWindowOnLoad"
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { useLazyGetReportsQuery } from "../../redux/apis/localApi/firebaseApi"
 import { getAuthSlice } from "../../redux/store"
 

@@ -1,24 +1,21 @@
 import ListItemButton from "@mui/material/ListItemButton"
 import ListItemIcon from "@mui/material/ListItemIcon"
-import { ChevronLeft, ChevronRight, ExitToApp } from "@mui/icons-material"
+import { ExitToApp } from "@mui/icons-material"
 import ListItemText from "@mui/material/ListItemText"
 import ListItem from "@mui/material/ListItem"
 import * as React from "react"
-import { useDrawer } from "../../contexts/DrawerProvider"
-import { useNavigate } from "react-router-dom"
 import { useState } from "react"
+import { useDrawer } from "../../contexts/DrawerProvider"
 import { auth } from "../../firebase"
 import { signOut } from "firebase/auth"
 import { useDispatch } from "react-redux"
 import { logout } from "../../redux/slices/authSlice"
 
 export default function LogOutTab() {
-    const navigate = useNavigate()
     const dispatch = useDispatch()
 
     const { isOpen } = useDrawer()
     const [loading, setLoading] = useState(false)
-
 
     const logOut = async () => {
         if (loading)
@@ -33,7 +30,6 @@ export default function LogOutTab() {
         try {
             await signOut(auth)
             dispatch(logout())
-            navigate("/")
             setLoading(false)
         } catch (err) {
             console.error(err)

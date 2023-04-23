@@ -1,8 +1,8 @@
-import FormField from "./FormField";
-import Box from '@mui/material/Box';
-import { useForm } from "react-hook-form";
-import {Button, Stack, Typography} from "@mui/material";
-import React from "react";
+import FormField from "./FormField"
+import Box from '@mui/material/Box'
+import { useForm } from "react-hook-form"
+import { Button, Stack, Typography } from "@mui/material"
+import React from "react"
 
 
 export default function ReportComponent() {

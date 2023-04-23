@@ -1,16 +1,9 @@
-import * as React from 'react';
-import {Box, Typography} from "@mui/material";
+import * as React from 'react'
+import { Box, Typography } from "@mui/material"
 import useHideSlidingWindowOnLoad from "../../hooks/useHideSlidingWindowOnLoad"
-import {
-    ArgumentAxis,
-    ValueAxis,
-    Chart,
-    BarSeries,
-    SplineSeries,
-    Title,
-} from '@devexpress/dx-react-chart-material-ui';
-import { Animation } from "@devexpress/dx-react-chart";
-import Grid from "@mui/material/Grid";
+import { ArgumentAxis, BarSeries, Chart, SplineSeries, Title, ValueAxis, } from '@devexpress/dx-react-chart-material-ui'
+import { Animation } from "@devexpress/dx-react-chart"
+import Grid from "@mui/material/Grid"
 
 export default function Stats() {
     useHideSlidingWindowOnLoad()
