@@ -45,6 +45,7 @@ app.get('/firebase/markers', async (req, res) => {
     res.status(200).json(result);
 });
 
+
 app.post('/test', async (req, res) => {
     let x = await db.listCollections();
     console.log(x);
