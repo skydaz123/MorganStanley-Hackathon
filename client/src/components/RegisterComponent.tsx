@@ -22,7 +22,6 @@ export default function RegisterComponent() {
             state: "",
             zip: "",
             maxCapacity: "",
-            fridgeNumber: ""
         },
         mode: "all"
     })
@@ -33,7 +32,7 @@ export default function RegisterComponent() {
             return;
         }
 
-        const auth = getAuth();
+        const auth = getAuth()
         createUserWithEmailAndPassword(auth, values.email, values.password)
             .then((userCredential) => {
             // Signed in 
@@ -89,7 +88,6 @@ export default function RegisterComponent() {
                 <FormField id="state" control={control} placeholder="State/Province"/>
                 <FormField id="zip" control={control} placeholder="Zip/Postal Code"/>
                 <FormField id="maxCapacity" control={control} label="Please enter the max capacity of food your establishment can hold (in lbs)" separateLabel/>
-                <FormField id="fridgeNumber" control={control} label="Please enter the number of fridges your establishment contains" separateLabel/>
                 <Button variant="outlined" onClick={submit} sx={{
                     border: '3px solid #EC701B !important',
                     '&:hover': {

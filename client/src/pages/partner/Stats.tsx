@@ -1,78 +1,111 @@
 import * as React from 'react';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { Box, Typography } from "@mui/material";
+import {Box, Typography} from "@mui/material";
 import useHideSlidingWindowOnLoad from "../../hooks/useHideSlidingWindowOnLoad"
-
-const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 90 },
-    {
-        field: 'name',
-        headerName: 'Name',
-        width: 150,
-        editable: true,
-    },
-    {
-        field: 'wastePerPound',
-        headerName: 'Waste Per Pound',
-        type: 'number',
-        width: 150,
-        editable: true,
-    },
-    {
-        field: 'roundTrip',
-        headerName: 'RoundTrip',
-        width: 110,
-        editable: true,
-    }
-
-    // {
-    //     field: 'fullName',
-    //     headerName: 'Full name',
-    //     description: 'This column has a value getter and is not sortable.',
-    //     sortable: false,
-    //     width: 160,
-    //     valueGetter: (params: GridValueGetterParams) =>
-    //         `${params.row.firstName || ''} ${params.row.lastName || ''}`,
-    // },
-];
-
-const rows = [
-    { id: 1, name: 'Snow', wastePerPound: 15, roundTrip: '15 miles' },
-    { id: 2, name: 'Barrow', wastePerPound: 2, roundTrip: '10 miles' },
-];
+import {
+    ArgumentAxis,
+    ValueAxis,
+    Chart,
+    BarSeries,
+    SplineSeries,
+    Title,
+} from '@devexpress/dx-react-chart-material-ui';
+import { Animation } from "@devexpress/dx-react-chart";
+import Grid from "@mui/material/Grid";
+import { useDispatch, useSelector } from "react-redux"
+import { useLazyGetReportsQuery } from "../../redux/apis/localApi/firebaseApi"
+import { getAuthSlice } from "../../redux/store"
+import { useState, useEffect } from 'react'
 
 export default function Stats() {
+    const state = useSelector(getAuthSlice)
+    const [loading, setLoading] = useState(false)
+    const [getReports] = useLazyGetReportsQuery();
+    const [recievedData, setRecievedData] = useState([]);
+    const [givenData, setGivenData] = useState([]);
+
+    const getData = async(token: string) => {
+        console.log("BeepBooop");
+        const result = await getReports(token).unwrap();
+
+        let foodRecievedData = result.map((x: {
+            timestamp: any; lb_recieved: any; lb_given: any; 
+            }, index: any) => {
+            return {
+                value: x.lb_recieved,
+                argument: x.timestamp
+            }
+        });
+        foodRecievedData.sort((a: { argument: any; }, b: { argument: any; }) => a.argument - b.argument);
+        console.log(foodRecievedData)
+
+        let foodGivenData = result.map((x: {
+            timestamp: any; lb_recieved: any; lb_given: any; 
+            }, index: any) => {
+            return {
+                value: x.lb_given,
+                argument: x.timestamp
+            }
+        });
+        foodGivenData.sort((a: { argument: any; }, b: { argument: any; }) => a.argument - b.argument);
+        console.log(foodGivenData);
+
+        setRecievedData(foodRecievedData);
+        setGivenData(foodGivenData);
+    }
+
+    useEffect(() => {
+        // @ts-ignore
+        let token: string = state.user.token;
+        getData(token);
+    }, [])
+
     useHideSlidingWindowOnLoad()
 
+
     return (
-        <Box sx={{ paddingLeft: '32px' }}>
+        <Box>
             <Typography sx={{
-                color: '#F46E21',
-                fontSize: '30px',
-                fontFamily: 'Montserrat',
+                paddingLeft: '80px',
+                paddingTop: '30px',
+                color: '#EC701B',
+                fontSize: 40,
+                fontFamily: 'Montserrat, sans-serif',
+                fontWeight: 'normal'
             }}>
-                Tabular View
+                Statistics
             </Typography>
-            <Box sx={{ height: 550, width: '100%', border: '2px solid #F46E21' }}>
-                <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    initialState={{
-                        pagination: {
-                            paginationModel: {
-                                pageSize: 5,
-                            },
-                        },
-                    }}
-                    pageSizeOptions={[5]}
-                    disableRowSelectionOnClick
-                    sx={{
-                        '&.MuiDataGrid-withBorderColor': {
-                            borderColor: 'orange',
-                        },
-                    }}
-                />
-            </Box>
+            <Grid container spacing={2} sx={{ paddingLeft: '80px', paddingTop: '30px' }}>
+                <Grid item xs={6}>
+                    <Box sx={{ border: '2px solid #EC701B', borderRadius: 2 }}>
+                        <Chart
+                            data={recievedData}
+                            height={400}
+                        >
+                            <ArgumentAxis/>
+                            <ValueAxis/>
+                            <SplineSeries valueField="value" argumentField="argument" color="#FF9600"/>
+                            <Title text="Food Received (in lbs)" />
+                            <Animation />
+                        </Chart>
+                    </Box>
+                </Grid>
+                <Grid item xs={5.5}>
+                    <Box sx={{ border: '2px solid #EC701B', borderRadius: 2 }}>
+                        <Chart
+                            data={givenData}
+                            height={400}
+                        >
+                            <ArgumentAxis/>
+                            <ValueAxis/>
+                            <SplineSeries valueField="value" argumentField="argument" color="#FF9600"/>
+                            <Title text="Food Donated (in lbs)" />
+                            <Animation />
+                        </Chart>
+                    </Box>
+                </Grid>
+                <Grid item xs={6}>
+                </Grid>
+            </Grid>
         </Box>
     );
 }
