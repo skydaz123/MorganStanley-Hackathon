@@ -6,6 +6,9 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import FormField from "../../components/FormField"
 import CustomButton from "../../components/CustomButton"
+import { useAddReportMutation } from "../../redux/apis/localApi/firebaseApi"
+import { useDispatch, useSelector } from "react-redux"
+import { getAuthSlice } from "../../redux/store"
 
 const inputSchema = z.number()
     .positive("Amount needs to be positive")
@@ -13,35 +16,49 @@ const inputSchema = z.number()
     .refine((n) => n >= 0)
 
 const formSchema = z.object({
-    perishReceived: inputSchema,
-    nonPerishReceived: inputSchema,
-    perishGiven: inputSchema,
-    nonPerishGiven: inputSchema,
-    foodThrownOut: inputSchema,
+    foodReceived: inputSchema,
+    foodGiven: inputSchema
 })
 
 export default function Request() {
     useHideSlidingWindowOnLoad()
 
+    const state = useSelector(getAuthSlice)
     const [loading, setLoading] = useState(false)
+    const [addReport] = useAddReportMutation()
+
     const { control, handleSubmit, reset } = useForm({
         defaultValues: {
             foodReceived: "",
             foodDonated: "",
         },
-        resolver: zodResolver(formSchema),
+        //resolver: zodResolver(formSchema),
         mode: "all",
     })
 
     const submit = handleSubmit(async values => {
         setLoading(true)
+        console.log("State is", state);
+        const {foodReceived, foodDonated} = values;
+        let lb_recieved = parseInt(foodReceived)
+        let lb_given = parseInt(foodDonated);
 
-        // REPLACE THIS WITH ACTUAL CALL TO API
-        await new Promise(res => {
-            setTimeout(() => {
-                res(undefined)
-            }, 2000)
-        })
+        // @ts-ignore
+        let email: any = state.user.email;
+
+        try{
+            setLoading(true);
+            const result = await addReport({
+                lb_recieved,
+                lb_given,
+                email,
+
+            }).unwrap()
+
+        }
+        catch (error) {
+            console.error(error)
+        }
 
         setLoading(false)
 

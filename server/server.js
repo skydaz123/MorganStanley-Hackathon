@@ -26,17 +26,7 @@ const db = getFirestore();
 
 app.use(cors());
 app.use(express.json());
-const data = {
-    name: 'Los Angeles',
-    state: 'CA',
-    country: 'USA'
-  };
   
-
-app.get('/test', async (req, res) => {
-    res.send("It. works!");
-});
-
 app.get('/firebase/markers', async (req, res) => {
   console.log("here");
     const markersRef = db.collection('markers');
@@ -48,27 +38,6 @@ app.get('/firebase/markers', async (req, res) => {
     res.status(200).json(result);
 });
 
-app.post('/test', async (req, res) => {
-    let x = await db.listCollections();
-    console.log(x);
-    //const cityRef = db.collection('cities').doc('BJ');
-    // const x = await cityRef.set({
-    // capital: true
-    // }, { merge: true });
-    res.status(200).json();
-});
-
-app.get('/firebase', (req, res) => {
-  res.send({
-    apiKey: process.env.FIREBASE_APIKEY,
-    authDomain: process.env.FIREBASE_AUTH,
-    projectId: process.env.FIREBASE_PROJECT,
-    storageBucket: process.env.FIREBASE_STORAGE,
-    messagingSenderId: process.env.FIREBASE_MESSAGE,
-    appId: process.env.FIREBASE_APP,
-    measurementID: process.env.FIREBASE_MEASURE
-  })
-});
 //Writing user addition here for now to see if it works, will move to other path later
 app.post('/firebase/addUser', async(req, res) => {
   let doesExist = await db.collection('partners').doc(req.body.email).get();
@@ -77,14 +46,6 @@ app.post('/firebase/addUser', async(req, res) => {
   if(doesExist.data() !== undefined){
     return res.status(400).json();
   }
-  // const data = {
-  //   address: req.body.address,
-  //   lat: req.body.lat,
-  //   long: req.body.long,
-  //   zipcode: req.body.zipcode,
-  //   email: req.body.email,
-  //   name: req.body.name
-  // };
 
   const {
     lat,
@@ -108,8 +69,6 @@ app.post('/firebase/addUser', async(req, res) => {
     maxCapacity,
     phoneNumber,
   }
-
-  console.log("here");
   const addedUser = await db.collection('partners')
       .doc(email)
       .set(data);
@@ -137,7 +96,6 @@ app.get('/firebase/getUser', async(req, res) => {
   .verifyIdToken(req.query.token)
   .then((decodedToken) => {
     email = decodedToken.email;
-    // ...
   })
   .catch((error) => {
     return res.status(404).send("Token was not valid sign in again");
@@ -145,6 +103,49 @@ app.get('/firebase/getUser', async(req, res) => {
   let data = (await db.collection('partners').doc(email).get()).data();
   res.send(data);
   
+})
+
+app.post('/firebase/addReport', async(req, res) => {
+  const today = new Date();
+  //let dateString = today.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
+  let dateString = today.toISOString().slice(0,10);
+  let key = `${dateString}_${req.body.email}`;
+  const {
+    lb_recieved,
+    lb_given,
+    email
+  } = req.body;
+
+  const data = {
+    lb_recieved,
+    lb_given,
+    email,
+    timestamp: dateString,
+  };
+  let check = await db.collection
+  await db.collection('reports').doc(key).set(data);
+  res.send(req.body);
+})
+
+app.get('/firebase/getReports', async (req, res) => {
+
+  //Make the token verification a middleware later
+  let email = "";
+  await getAuth()
+  .verifyIdToken(req.query.token)
+  .then((decodedToken) => {
+    email = decodedToken.email;
+  })
+  .catch((error) => {
+    return res.status(404).send("Token was not valid sign in again");
+  });
+
+  let result_arr = await db.collection('reports').where('email', '==', email).get();
+  let data = [];
+  result_arr.forEach(doc => {
+    data.push(doc.data());
+  });
+  res.send(data);
 })
 
 app.get('/exec',async(req, res) =>{

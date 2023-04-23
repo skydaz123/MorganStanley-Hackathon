@@ -30,5 +30,6 @@ export const getDemoSlice = (root: RootState) => root[demoSlice.name]
 export const getMapSlice = (root: RootState) => root[mapSlice.name]
 export const getSlidingWindowSlice = (root: RootState) => root[slidingWindowSlice.name]
 export const getSignUpSlice = (root: RootState) => root[signUpSlice.name]
+export const getAuthSlice = (root: RootState) => root[authSlice.name]
 
 export default store
