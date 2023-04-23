@@ -42,7 +42,20 @@ export const firebaseApi = rootApi.injectEndpoints({
             }
         }),
         getUser: build.query({
-            query: (idToken: string) => `/firebase/getUser/?token=${idToken}`,
+            query: (idToken: string) => `/firebase/getUser?token=${idToken}`,
+            transformResponse: (data) => {
+                return data as {
+                    zipcode: string
+                    address: string
+                    role: Role
+                    phoneNumber: string
+                    lng: number
+                    name: string
+                    maxCapacity: number
+                    lat: number
+                    email: string
+                }
+            }
         }),
         addReport: build.mutation({
             query: (body: AddReportPayload) => ({
@@ -52,7 +65,7 @@ export const firebaseApi = rootApi.injectEndpoints({
             }),
         }),
         getReports: build.query({
-            query: (idToken: string) => `/firebase/getReports/?token=${idToken}`,
+            query: (idToken: string) => `/firebase/getReports?token=${idToken}`,
         }),
     })
 })

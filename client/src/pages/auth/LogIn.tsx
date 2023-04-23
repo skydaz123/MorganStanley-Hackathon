@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom"
 import { signInWithEmailAndPassword } from "firebase/auth"
 import { auth } from "../../firebase"
 import { useDispatch } from "react-redux"
-import { register } from "../../redux/slices/authSlice"
+import { addToken, register } from "../../redux/slices/authSlice"
 import { useLazyGetUserQuery } from "../../redux/apis/localApi/firebaseApi"
 import Role from "../../enums/role"
 import LoadingBar from "../../components/LoadingBar"
@@ -53,19 +53,18 @@ export default function LogIn() {
             const { user } = await signInWithEmailAndPassword(auth, email, password)
 
             const token = await user.getIdToken(true)
+            dispatch(addToken(token))
 
+            // remove token from parameter
             const result = await getUser(token).unwrap()
-            console.log("[LogIn]", result)
 
-            // add result to dispatch
-            // dispatch(register({
-            //     email,
-            //     id: user.uid,
-            //     name: user.displayName,
-            //     token,
-            // }))
+            dispatch(register({
+                role: result.role,
+                email: result.email,
+                name: result.name,
+                id: user.uid,
+            }))
 
-            // use result.role to navigate
             switch (result.role) {
                 case Role.Partner:
                     navigate("/partner")
