@@ -4,6 +4,7 @@ import { getSignUpSlice, getSlidingWindowSlice } from "../../../redux/store"
 import { changeState } from "../../../redux/slices/slidingWindowSlice"
 import { DELAYS, DURATION } from "../../../loaders/WindowLoader/config"
 import { nextScene } from "../../../redux/slices/signUpSlice"
+import AdditionalScene from "./AdditionalScene"
 
 const FormScene = lazy(() => import("./FormScene"))
 const RoleSelectionScene = lazy(() => import("./RoleSelectionScene"))
@@ -40,6 +41,9 @@ export default function SignUp() {
 
     if (scene == 1)
         return <RoleSelectionScene nextPage={nextPage}/>
+
+    if (scene == 2)
+        return <AdditionalScene nextPage={nextPage}/>
 
     return <SubmissionScene/>
 }
