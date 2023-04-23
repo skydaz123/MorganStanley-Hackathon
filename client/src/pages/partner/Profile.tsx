@@ -62,7 +62,7 @@ export default function Profile() {
                 justifyContent: 'center',
                 top: '10%'
             }}>
-                {userDisplay.name}
+                {user.name}
             </Typography>
             <Box sx={{
                 border: '3px solid #EC701B',
