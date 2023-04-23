@@ -39,7 +39,7 @@ export default function Stats() {
             }
         });
         chartData.sort((a: { argument: any; }, b: { argument: any; }) => a.argument - b.argument);
-        chartData = chartData.slice(0,5);
+        chartData = chartData.slice(0,4);
         setData(chartData);
     }
 
@@ -74,7 +74,7 @@ export default function Stats() {
                             <ArgumentAxis/>
                             <ValueAxis/>
                             <SplineSeries valueField="val_1" argumentField="argument" color="#FF9600"/>
-                            <Title text="Food Received (thousands lbs)" />
+                            <Title text="Food Received (lbs)" />
                             <Animation />
                         </Chart>
                     </Box>
@@ -88,7 +88,7 @@ export default function Stats() {
                             <ArgumentAxis/>
                             <ValueAxis/>
                             <SplineSeries valueField="val_2" argumentField="argument" color="#FF9600"/>
-                            <Title text="Food Donated (thousands lbs)" />
+                            <Title text="Food Donated (lbs)" />
                             <Animation />
                         </Chart>
                     </Box>
@@ -102,7 +102,7 @@ export default function Stats() {
                             <ArgumentAxis/>
                             <ValueAxis/>
                             <BarSeries valueField="val_3" argumentField="argument" color="#FF9600"/>
-                            <Title text="Food Not Given Out (thousands lbs)" />
+                            <Title text="Food Not Given Out (lbs)" />
                             <Animation />
                         </Chart>
                     </Box>

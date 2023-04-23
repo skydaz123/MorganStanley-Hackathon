@@ -12,7 +12,13 @@ import { useLazyGetUserQuery } from "../../redux/apis/localApi/firebaseApi";
 export default function Profile() {
     useHideSlidingWindowOnLoad()
 
-    const [userDisplay, setUser] = useState();
+    const [userDisplay, setUser] = useState({
+        name: "",
+        address: "",
+        email: "",
+        phoneNumber: "",
+        maxCapacity: ""
+    });
     const [getUser] = useLazyGetUserQuery()
     const {isLoggedIn, user} = useSelector(getAuthSlice)
     const getUserInfo = async(token: any) => {
@@ -27,13 +33,22 @@ export default function Profile() {
 
     const textStyle = {
         color: '#EC701B',
-        fontSize: 20,
+        fontSize: 18,
         fontFamily: 'Montserrat, sans-serif',
         fontWeight: 'bold'
     }
-    const handleClick = () => {
-        console.log("Hello world");
+    
+    const normalTextStyle = {
+        color: 'black',
+        fontSize: 18,
+        fontFamily: 'Montserrat, sans-serif',
+        fontWeight: 600
     }
+
+    const formatPhoneNumber = (phoneNumber: string) => {
+        return phoneNumber.substring(0, 3) + '-' + phoneNumber.substring(3, 6) + '-' + phoneNumber.substring(6);
+    }
+
     return (
         <Box>
             <Typography sx={{
@@ -41,10 +56,12 @@ export default function Profile() {
                 fontFamily: 'Montserrat, sans-serif',
                 color: '#EC701B',
                 position: 'absolute',
-                left: '42%',
-                top: '8%'
+                left: '50%',
+                textAlign: 'center',
+                justifyContent: 'center',
+                top: '10%'
             }}>
-                Organization name
+                {userDisplay.name}
             </Typography>
             <Box sx={{
                 border: '3px solid #EC701B',
@@ -61,35 +78,51 @@ export default function Profile() {
                     </div>
                 </div>
 
-                <Grid container spacing={2} sx={{
+                <Grid container spacing={0} sx={{
                     position: 'absolute',
                     left: '5%',
-                    top: '55%',
+                    top: '48%',
                     gap: 1
                 }}>
-                    <Grid item xs={6}>
-                        <Typography sx={ textStyle }>Org. Address: {
-                        // @ts-ignore
-                        userDisplay.address
-                        }</Typography>
+                    <Grid item xs={11}>
+                        <Typography sx={ textStyle }>Org. Address: 
+                            <Typography sx={ normalTextStyle }>
+                            {
+                                // @ts-ignore
+                                userDisplay.address
+                            }
+                            </Typography>
+                        </Typography>
                     </Grid>
-                    <Grid item xs={6}>
-                        <Typography sx={ textStyle }>Org. Email:{
-                           // @ts-ignore
-                            userDisplay.email 
-                        }</Typography>
+                    <Grid item xs={11}>
+                        <Typography sx={ textStyle }>Org. Email: 
+                            <Typography sx={ normalTextStyle }>
+                            {
+                                // @ts-ignore
+                                userDisplay.email 
+                            }
+                            </Typography>
+                        </Typography>
                     </Grid>
-                    <Grid item xs={6}>
-                        <Typography sx={ textStyle }>Phone Number: {
-                            // @ts-ignore
-                            userDisplay.phoneNumber
-                        } </Typography>
+                    <Grid item xs={11}>
+                        <Typography sx={ textStyle }>Phone Number: 
+                            <Typography sx={ normalTextStyle }>
+                            {
+                                // @ts-ignore
+                                formatPhoneNumber(userDisplay.phoneNumber)
+                            } 
+                            </Typography>
+                        </Typography>
                     </Grid>
-                    <Grid item xs={6}>
-                        <Typography sx={ textStyle }>Storage Capacity: {
-                            // @ts-ignore
-                            userDisplay.maxCapacity
-                        }</Typography>
+                    <Grid item xs={11}>
+                        <Typography sx={ textStyle }>Storage Capacity: 
+                            <Typography sx={ normalTextStyle }>
+                            {
+                                // @ts-ignore
+                                userDisplay.maxCapacity
+                            } lbs
+                            </Typography>
+                        </Typography>
                     </Grid>
                 </Grid>
             </Box>
