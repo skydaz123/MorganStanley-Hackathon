@@ -6,23 +6,46 @@ import ListItem from "@mui/material/ListItem"
 import * as React from "react"
 import { useDrawer } from "../../contexts/DrawerProvider"
 import { useNavigate } from "react-router-dom"
+import { useState } from "react"
+import { auth } from "../../firebase"
+import { signOut } from "firebase/auth"
+import { useDispatch } from "react-redux"
+import { logout } from "../../redux/slices/authSlice"
 
 export default function LogOutTab() {
-    const { isOpen } = useDrawer()
     const navigate = useNavigate()
+    const dispatch = useDispatch()
 
-    const logOut = () => {
+    const { isOpen } = useDrawer()
+    const [loading, setLoading] = useState(false)
+
+
+    const logOut = async () => {
+        if (loading)
+            return
+
         const ok = window.confirm("Are you sure you want to log out?")
         if (!ok)
             return
-        console.log("Logging out...")
-        navigate("/")
+
+        setLoading(true)
+
+        try {
+            await signOut(auth)
+            dispatch(logout())
+            navigate("/")
+            setLoading(false)
+        } catch (err) {
+            console.error(err)
+            setLoading(false)
+        }
     }
 
     return (
         <ListItem disablePadding sx={{ display: "block" }}>
             <ListItemButton
                 onClick={logOut}
+                disabled={loading}
                 sx={{
                     minHeight: 48,
                     justifyContent: isOpen ? "initial" : "center",

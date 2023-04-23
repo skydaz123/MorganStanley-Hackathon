@@ -7,9 +7,9 @@ const localApi = createApi({
     baseQuery: retry(fetchBaseQuery({
         baseUrl: `/`,
         prepareHeaders: (headers, api) => {
-            const { isLoggedIn, token } = (api.getState() as RootState).auth
+            const { token } = (api.getState() as RootState).auth
 
-            if (isLoggedIn && token)
+            if (token)
                 headers.set("Authorization", `Bearer ${token}`)
 
             return headers

@@ -42,7 +42,7 @@ export const firebaseApi = rootApi.injectEndpoints({
             }
         }),
         getUser: build.query({
-            query: (idToken: string) => `/firebase/getUser?token=${idToken}`,
+            query: () => `/firebase/getUser`,
             transformResponse: (data) => {
                 return data as {
                     zipcode: string
@@ -65,7 +65,7 @@ export const firebaseApi = rootApi.injectEndpoints({
             }),
         }),
         getReports: build.query({
-            query: (idToken: string) => `/firebase/getReports?token=${idToken}`,
+            query: () => `/firebase/getReports`,
         }),
     })
 })

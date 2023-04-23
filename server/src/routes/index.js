@@ -1,6 +1,6 @@
 import { Router } from "express";
-import execRouter from "./exec.js"
-import firebaseRouter from "./firebase.js";
+import execRouter from "./exec-routes.js"
+import firebaseRouter from "./firebase-routes.js";
 
 // this router is where you add more routers
 const indexRouter = Router()
