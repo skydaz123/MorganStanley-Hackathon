@@ -26,11 +26,8 @@ export default function Request() {
     const [loading, setLoading] = useState(false)
     const { control, handleSubmit, reset } = useForm({
         defaultValues: {
-            perishReceived: "",
-            nonPerishReceived: "",
-            perishGiven: "",
-            nonPerishGiven: "",
-            foodThrownOut: "",
+            foodReceived: "",
+            foodDonated: "",
         },
         resolver: zodResolver(formSchema),
         mode: "all",
@@ -54,7 +51,13 @@ export default function Request() {
 
     return (
         <Box sx={{ p: "32px" }}>
-            <Typography variant="h4" gutterBottom>Request Resources</Typography>
+            <Typography variant="h4" gutterBottom sx={{
+                color: '#F46E21',
+                fontSize: '30px',
+                fontFamily: 'Montserrat',
+            }}>
+                Report Submission
+            </Typography>
             <Stack spacing="20px" maxWidth="500px">
                 {
                     loading &&
@@ -66,34 +69,17 @@ export default function Request() {
                 }
                 <FormField
                     control={control}
-                    id="perishReceived"
-                    label="Enter the amount of perishable food received (in lbs)"
+                    id="foodReceived"
+                    label="Enter the amount of food received (in lbs)"
                     separateLabel
                 />
                 <FormField
                     control={control}
-                    id="nonPerishReceived"
-                    label="Enter the amount of non-perishable food received (in lbs)"
+                    id="foodDonated"
+                    label="Enter the amount of food donated (in lbs)"
                     separateLabel
                 />
-                <FormField
-                    control={control}
-                    id="perishGiven"
-                    label="Enter the amount of perishable food donated"
-                    separateLabel
-                />
-                <FormField
-                    control={control}
-                    id="nonPerishGiven"
-                    label="Enter the amount of non-perishable food donated"
-                    separateLabel
-                />
-                <FormField
-                    control={control}
-                    id="foodThrownOut"
-                    label="Enter the amount of food thrown out (in lbs)"
-                    separateLabel
-                />
+
                 <CustomButton variant="outlined" onClick={submit} disabled={loading}>
                     Submit Report
                 </CustomButton>
