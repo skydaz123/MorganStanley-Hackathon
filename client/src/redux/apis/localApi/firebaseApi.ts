@@ -87,6 +87,17 @@ export const firebaseApi = rootApi.injectEndpoints({
             },
             providesTags: [REPORT_TAG]
         }),
+        getOtherReports: build.query({
+            query: (email: string) => `/firebase/getOtherReports?email=${email}`,
+            transformResponse: (data) => {
+                return data as {
+                    timestamp: number
+                    lb_recieved: number
+                    lb_given: number
+                }[]
+            },
+            providesTags: [REPORT_TAG]
+        }),
     })
 })
 
@@ -97,4 +108,5 @@ export const {
     useAddReportMutation,
     useLazyGetReportsQuery,
     useGetReportsQuery,
+    useGetOtherReportsQuery,
 } = firebaseApi
