@@ -5,6 +5,7 @@ const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestor
 const express = require('express')
 const dotenv = require('dotenv')
 const bodyParser = require('body-parser');
+const { exec } = require('child_process');
 const app = express()
 const cors = require('cors')
 const port = 8000;
@@ -74,7 +75,7 @@ app.post('/firebase/addUser', async(req, res) => {
   if(doesExist.data() !== undefined){
     return res.status(400).json();
   }
-  const data = {
+  const data = { //data for partners
     address: req.body.address,
     lat: req.body.lat,
     long: req.body.long,
@@ -98,6 +99,18 @@ app.post('/firebase/addUser', async(req, res) => {
   res.status(200).json();
 });
 
+app.get('/exec',async(req, res) =>{
+  console.log("something");
+  exec('python3 ./hello.py', (error, stdout, stderr) => {
+    // if (error) {
+    //   console.error(exec error: ${error});
+    //   return;
+    // }
+    console.log( stdout);
+    console.log(error);
+    // console.log(stderr);
+  });
+});
 app.use('/firebase', user)
 app.use('/firebase', map)
 

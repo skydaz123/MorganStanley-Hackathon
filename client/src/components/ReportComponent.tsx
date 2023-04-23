@@ -8,10 +8,8 @@ import React from "react";
 export default function ReportComponent() {
     const { control, handleSubmit    } = useForm({
         defaultValues: {
-            perishReceived: "",
-            nonPerishReceived: "",
-            perishGiven: "",
-            nonPerishGiven: ""
+            foodReceived: "",
+            foodGiven: "",
         },
         mode: "all"
     })
@@ -29,10 +27,8 @@ export default function ReportComponent() {
                 Report Form
             </Typography>
             <Stack spacing='20px'>
-                <FormField id="perishReceived" control={control} label="Enter the amount of perishable food received (in lbs)" separateLabel/>
-                <FormField id="nonPerishReceived" control={control} label="Enter the amount of non-perishable food received (in lbs)" separateLabel/>
-                <FormField id="perishGiven" control={control} label="Enter the amount of perishable food donated" separateLabel/>
-                <FormField id="nonPerishGiven" control={control} label="Enter the amount of non-perishable food donated" separateLabel/>
+                <FormField id="foodReceived" control={control} label="Enter the amount of food received (in lbs)" separateLabel/>
+                <FormField id="foodGiven" control={control} label="Enter the amount of food donated (in lbs)" separateLabel/>
                 <Button variant="outlined" onClick={submit} sx={{
                     border: '3px solid #EC701B !important',
                     '&:hover': {
