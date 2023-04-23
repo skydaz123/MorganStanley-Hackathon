@@ -1,5 +1,6 @@
 import rootApi from "./index"
 import Role from "../../../enums/role"
+import { REPORT_TAG, USER_TAG } from "./tagTypes"
 
 type AddUserPayload = {
     address: string
@@ -39,6 +40,11 @@ export const firebaseApi = rootApi.injectEndpoints({
                     maxCapacity: number
                     phoneNumber: string
                 }
+            },
+            invalidatesTags: (result, error) => {
+                if (error || !result)
+                    return []
+                return [{ type: USER_TAG, id: result.email }]
             }
         }),
         getUser: build.query({
@@ -55,6 +61,11 @@ export const firebaseApi = rootApi.injectEndpoints({
                     lat: number
                     email: string
                 }
+            },
+            providesTags: (result, error,) => {
+                if (error || !result)
+                    return []
+                return [{ type: USER_TAG, id: result.email }]
             }
         }),
         addReport: build.mutation({
@@ -63,15 +74,23 @@ export const firebaseApi = rootApi.injectEndpoints({
                 method: "POST",
                 body
             }),
+            invalidatesTags: [REPORT_TAG]
         }),
         getReports: build.query({
             query: () => `/firebase/getReports`,
+            transformResponse: (data) => {
+                return data as {
+                    timestamp: number
+                    lb_recieved: number
+                    lb_given: number
+                }[]
+            },
+            providesTags: [REPORT_TAG]
         }),
     })
 })
 
 export const {
-    // useGetSomethingQuery,
     useAddUserMutation,
     useLazyGetUserQuery,
     useGetUserQuery,

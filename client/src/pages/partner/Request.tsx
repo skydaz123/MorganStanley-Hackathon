@@ -27,16 +27,19 @@ export default function Request() {
     const { control, handleSubmit, reset } = useForm({
         defaultValues: {
             foodReceived: "",
-            foodDonated: "",
+            foodGiven: "",
         },
         resolver: zodResolver(formSchema),
         mode: "all",
     })
 
     const submit = handleSubmit(async values => {
+        if (loading)
+            return
+
         const {
             foodReceived,
-            foodDonated
+            foodGiven
         } = values
 
         try {
@@ -44,7 +47,7 @@ export default function Request() {
 
             await addReport({
                 lb_recieved: Number(foodReceived),
-                lb_given: Number(foodDonated),
+                lb_given: Number(foodGiven),
                 email: user?.email ?? "[UNKNOWN]",
             }).unwrap()
 
@@ -78,7 +81,7 @@ export default function Request() {
                 />
                 <FormField
                     control={control}
-                    id="foodDonated"
+                    id="foodGiven"
                     label="Enter the amount of food donated (in lbs)"
                     separateLabel
                 />

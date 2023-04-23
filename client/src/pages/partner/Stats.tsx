@@ -1,66 +1,53 @@
-import * as React from 'react';
-import {Box, Typography} from "@mui/material";
+import * as React from 'react'
+import { useEffect, useMemo } from 'react'
+import { Box, Typography } from "@mui/material"
 import useHideSlidingWindowOnLoad from "../../hooks/useHideSlidingWindowOnLoad"
-import {
-    ArgumentAxis,
-    ValueAxis,
-    Chart,
-    BarSeries,
-    SplineSeries,
-    Title,
-} from '@devexpress/dx-react-chart-material-ui';
-import { Animation } from "@devexpress/dx-react-chart";
-import Grid from "@mui/material/Grid";
-import { useDispatch, useSelector } from "react-redux"
-import { useLazyGetReportsQuery } from "../../redux/apis/localApi/firebaseApi"
-import { getAuthSlice } from "../../redux/store"
-import { useState, useEffect } from 'react'
+import { ArgumentAxis, Chart, SplineSeries, Title, ValueAxis, } from '@devexpress/dx-react-chart-material-ui'
+import { Animation } from "@devexpress/dx-react-chart"
+import Grid from "@mui/material/Grid"
+import { useGetReportsQuery } from "../../redux/apis/localApi/firebaseApi"
+import BigLoader from "../../loaders/BigLoader"
 
 export default function Stats() {
-    const state = useSelector(getAuthSlice)
-    const [loading, setLoading] = useState(false)
-    const [getReports] = useLazyGetReportsQuery();
-    const [recievedData, setRecievedData] = useState([]);
-    const [givenData, setGivenData] = useState([]);
-
-    const getData = async(token: string) => {
-        console.log("BeepBooop");
-        const result = await getReports(token).unwrap();
-
-        let foodRecievedData = result.map((x: {
-            timestamp: any; lb_recieved: any; lb_given: any; 
-            }, index: any) => {
-            return {
-                value: x.lb_recieved,
-                argument: x.timestamp
-            }
-        });
-        foodRecievedData.sort((a: { argument: any; }, b: { argument: any; }) => a.argument - b.argument);
-        console.log(foodRecievedData)
-
-        let foodGivenData = result.map((x: {
-            timestamp: any; lb_recieved: any; lb_given: any; 
-            }, index: any) => {
-            return {
-                value: x.lb_given,
-                argument: x.timestamp
-            }
-        });
-        foodGivenData.sort((a: { argument: any; }, b: { argument: any; }) => a.argument - b.argument);
-        console.log(foodGivenData);
-
-        setRecievedData(foodRecievedData);
-        setGivenData(foodGivenData);
-    }
-
-    useEffect(() => {
-        // @ts-ignore
-        let token: string = state.user.token;
-        getData(token);
-    }, [])
-
     useHideSlidingWindowOnLoad()
 
+    const { data, isFetching, isError, error } = useGetReportsQuery(undefined)
+
+    useEffect(() => {
+        if (!isError)
+            return
+        console.error(error)
+    }, [isError, error])
+
+    const { receivedData, givenData } = useMemo(() => {
+        if (isFetching || isError || !data)
+            return { receivedData: [], givenData: [] }
+
+        const foodRecievedData = data.map(({ lb_recieved, timestamp }) => ({
+            value: lb_recieved,
+            argument: timestamp,
+        }))
+        foodRecievedData.sort((a, b) => a.argument - b.argument)
+        console.log(foodRecievedData)
+
+        const foodGivenData = data.map(({ lb_given, timestamp }) => ({
+            value: lb_given,
+            argument: timestamp,
+        }))
+        foodGivenData.sort((a, b) => a.argument - b.argument)
+        console.log(foodGivenData)
+
+        return {
+            receivedData: foodRecievedData,
+            givenData: foodGivenData
+        }
+    }, [data, isFetching, isError])
+
+    if (isFetching)
+        return <BigLoader/>
+
+    if (!data)
+        return <>No data found.</>
 
     return (
         <Box>
@@ -78,14 +65,14 @@ export default function Stats() {
                 <Grid item xs={6}>
                     <Box sx={{ border: '2px solid #EC701B', borderRadius: 2 }}>
                         <Chart
-                            data={recievedData}
+                            data={receivedData}
                             height={400}
                         >
                             <ArgumentAxis/>
                             <ValueAxis/>
                             <SplineSeries valueField="value" argumentField="argument" color="#FF9600"/>
-                            <Title text="Food Received (in lbs)" />
-                            <Animation />
+                            <Title text="Food Received (in lbs)"/>
+                            <Animation/>
                         </Chart>
                     </Box>
                 </Grid>
@@ -98,8 +85,8 @@ export default function Stats() {
                             <ArgumentAxis/>
                             <ValueAxis/>
                             <SplineSeries valueField="value" argumentField="argument" color="#FF9600"/>
-                            <Title text="Food Donated (in lbs)" />
-                            <Animation />
+                            <Title text="Food Donated (in lbs)"/>
+                            <Animation/>
                         </Chart>
                     </Box>
                 </Grid>
@@ -107,5 +94,5 @@ export default function Stats() {
                 </Grid>
             </Grid>
         </Box>
-    );
+    )
 }
