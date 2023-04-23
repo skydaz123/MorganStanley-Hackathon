@@ -1,6 +1,4 @@
 import AddIcon from '@mui/icons-material/Add';
-import GpsFixedIcon from '@mui/icons-material/GpsFixed';
-import MenuIcon from '@mui/icons-material/Menu';
 import RemoveIcon from '@mui/icons-material/Remove';
 import {
   IconButton,
@@ -9,7 +7,6 @@ import {
   List,
   ListItem,
   ListItemText,
-  SvgIcon
 } from '@mui/material'; // Import Modal here
 import Stack from '@mui/material/Stack';
 import L, { Icon } from 'leaflet';
@@ -17,13 +14,12 @@ import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.js';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import 'leaflet/dist/leaflet.css';
-import { MapContainer, TileLayer, useMap, useMapEvent, } from 'react-leaflet';
+import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import '@geoman-io/leaflet-geoman-free';  
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';  
 import * as turf from '@turf/turf';
-import React, { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
-import SearchBar from './SearchBar';
+import React, { useEffect, useState } from 'react';
+import orangeMarker from "./Orange.png"
 import {
   LineChart,
   Line,
@@ -38,12 +34,6 @@ import axios from 'axios';
 
 
 //replace buttons by leaflet.pm
-
-
-//Icon for making zone shape
-import BrushIcon from '@mui/icons-material/Brush';
-//drawer for hamburger on side
-import MapDrawer from './MapDrawer';
 //hide 
 import "../css/Map.css"
 
@@ -58,7 +48,11 @@ const myIcon = new Icon({
     iconAnchor: [12, 41],
 });
 
-
+const icon = new Icon({
+  iconUrl: orangeMarker,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+})
 
 function calculateStorageQuantity(lastDeliveryDate) {
   const currentDate = new Date();
@@ -83,8 +77,6 @@ const southWest = L.latLng(-90, -180);
 const northEast = L.latLng(90, 180);
 const bounds = L.latLngBounds(southWest, northEast);
 var maps = null;
-var routing = null;
-var line = null;
 var availableLocations = [];	
 var markers = [];
 // const locations = [
@@ -107,11 +99,8 @@ function generateGraphData(location) {
 
 
 export default function Map() {
-  
-  const [check, setCheck] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
-  const [block, setBlock] = useState(false);
   const handleOpenModal = (location) => {
     setSelectedLocation(location);
     setIsModalOpen(true);
@@ -218,87 +207,24 @@ export default function Map() {
    useEffect(() => {
        calculateDistances();
    }, []);
-   if(!block && locations) {
-      console.log(locations);
-      availableLocations = locations;
-   }
 
    useEffect(() => {
     console.log('matrix', distanceMatrix);
   }, [distanceMatrix]);
 
     
-   if(!block && locations) {	
-    console.log(locations);	
+
     availableLocations = locations;	
- }	
       availableLocations.forEach((loc) => {	
-        console.log("Length is " + availableLocations.length)	
-        const marker = L.marker([loc.lat, loc.lng], { icon: myIcon }).addTo(map);	
+        console.log("Length is " + loc.isBank)	
+        const marker = L.marker([loc.lat, loc.lng], { icon : (loc.isBank ? icon : myIcon) }).addTo(map);	
+        //console.log("mark is " + marker.getIcon().toString());
         //marker.bindPopup("Hello World!").openPopup();	
         // Attach click event handler for marker to open modal	
         marker.on('click', () => handleOpenModal(loc));	
         markers.push(marker)	
         //availableLocations[loc.name] = {lat: marker.getLatLng().lat, lng: marker.getLatLng().lng};	
         //console.log("available is " + availableLocations[loc.name].lat);	
-      });
-      map.pm.addControls({
-        position: 'topright',
-        drawPolygon: true,
-        drawText : false,
-        drawCircle: false,
-        drawCircleMarker: false,
-        drawMarker: false,
-        drawPolyline: false,
-        drawRectangle: false,
-        editMode: false,
-        dragMode: false,
-        cutPolygon: false,
-        removalMode: false,
-        rotateMode: false,
-        merge: false,
-        delete : false
-    });
-
-      map.on('pm:create', (e) => {
-        const layer = e.layer;
-        var temp = markers;	
-        var itemToDelete = [];
-        markers.forEach(mark => {
-          if (!(mark instanceof L.Marker)) 
-            return;
-          const latlng = mark.getLatLng();
-          const point = turf.point([latlng.lng, latlng.lat]);
-          const isInside = turf.booleanPointInPolygon(point, layer.toGeoJSON());
-          if (!isInside) {
-            //remove from temp	
-            itemToDelete.push(mark);
-            map.removeLayer(mark);
-          }
-        });
-        map.removeLayer(layer);
-        let index = 0;	
-        for(let i = 0; index < itemToDelete.length; i++)	
-        {	
-          console.log(temp[i].getLatLng().lat);	
-          console.log(itemToDelete[index].getLatLng().lat)	
-          if(temp[i].getLatLng().lat === itemToDelete[index].getLatLng().lat && temp[i].getLatLng().lng === itemToDelete[index].getLatLng().lng)	
-          {	
-            console.log("GOT IN:")	
-            temp.splice(i, 1);	
-            i = -1;	
-            index++;	
-          }	
-        }	
-        markers = temp;	
-        console.log("before addition" + availableLocations);	
-        let tempArr = [];	
-        for(let i = 0; i < markers.length; i++)	
-        {	
-          tempArr.push({lat: markers[i].getLatLng().lat, lng: markers[i].getLatLng().lng});	
-        }	
-        availableLocations = tempArr;	
-        console.log("Markers length is " + availableLocations.length)
       });
       return null;
     }
@@ -315,67 +241,6 @@ export default function Map() {
     }
 
     
-    function handleDraw() {
-      if(!check)
-      {
-        if(routing === null) { 
-          console.log("length is " + availableLocations.length)
-          console.log("Drawing routes");
-          routing = L.Routing.control({
-            createMarker: function() { return null; } ,
-            waypoints: availableLocations,
-            //showAlternatives: false,
-    
-            //Snap waypoints to nearest road and will not include walk up route
-            //waypointMode: 'snap',
-            useZoomParameter: false,
-            show:false,
-            routeWhileDragging: true,
-            lineOptions: {
-              styles: [{className: 'hide'}] // Adding animate class
-            },
-          }).addTo(maps);
-            routing.on('routeselected', function(e) {
-            //console.log(e.route.coordinates);
-            line = L.polyline(e.route.coordinates, {snakingSpeed: 200});
-            line.addTo(maps).snakeIn();
-            line.setStyle({opacity: 1});
-            
-            // line.on('mouseover', function () {
-            //   this.setText('  ►  ', {repeat: true, attributes: {fill: 'red'}});
-            // });
-            // line.on('mouseout', function () {
-            //   this.setText(null);
-            // });
-          });
-          routing ._container.style.display = "none" // <--- remove control
-          console.log("length is " + markers.length);	
-          console.log(locations);	
-          console.log(availableLocations);	
-          if(!block) {;	
-            setBlock(!block);	
-            console.log("It is " + availableLocations);	
-          }	
-          routing.setWaypoints(availableLocations);
-        }
-        else {
-          line.setStyle({opacity: 1});
-        }
-      }
-      else {
-        console.log("Removing Routes")
-        line.setStyle({opacity: 0});
-      }
-      setCheck(!check);
-    }
-
-    function handleEdit() {
-      console.log("Edit active");
-      //let polylineDrawer = new L.Draw.Polyline(maps, {})
-      //polylineDrawer.enable()
-      let rectangle = new L.Draw.Rectange(maps, {})
-      rectangle.enable();
-    }
 
     return (
         <div>
@@ -427,31 +292,6 @@ export default function Map() {
                 <div></div> // Fallback empty element
               )}
             </Modal>
-
-            <div style={{ display: 'flex', justifyContent: 'start' }}>
-              <Typography style={{
-                position: 'absolute',
-                zIndex: '1000',
-                fontSize: '40px',
-                color: 'orange',
-                marginTop: '1.25%',
-                textShadow: '1px 1px 0px black, -1px 1px 0px black, 1px -1px 0px black, -1px -1px 0px black'  // Add text-shadow here
-            }}>
-              <Link to='/' style={{ color: 'inherit', textDecoration: 'none' }}>
-                Name
-              </Link>
-            </Typography>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'center'}}>
-                <div style={{ position: 'absolute', zIndex: '1000', marginTop: '2.5%' }}>
-                    <SearchBar/>
-                </div>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'end' }}>
-              <div style = {{position: 'absolute', zIndex: '1000' }}> 
-                <MapDrawer/>
-              </div>
-            </div>
             <MapContainer
                 style={{ height: '100vh', width: '100wh', position: 'relative' }}
                 center={[0, 0]}
@@ -467,14 +307,6 @@ export default function Map() {
             </MapContainer>
             <div style={{ position: 'absolute', bottom: '20px', right: '20px', zIndex: '1000' }}>
                 <Stack spacing={2}>
-                    <IconButton onClick={() => handleEdit()}
-                                sx={{ backgroundColor: 'white', borderRadius: 3 }}>
-                        <BrushIcon/>
-                    </IconButton>
-                    <IconButton onClick={() => handleDraw()}
-                                sx={{ backgroundColor: 'white', borderRadius: 3 }}>
-                        <GpsFixedIcon/>
-                    </IconButton>
                     <IconButton onClick={() => handleZoomIn()}
                                 sx={{ backgroundColor: 'white', borderRadius: 3 }}>
                         <AddIcon/>
