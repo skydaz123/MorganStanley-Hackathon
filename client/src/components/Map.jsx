@@ -92,7 +92,7 @@ export default function Map() {
                routeWhileDragging: false,
                showAlternatives: false,
                fitSelectedRoutes: false,
-             }).addTo(map);
+             });
             
              controls[key] = control;
             
@@ -121,6 +121,7 @@ export default function Map() {
       
    }, []);
 
+   
     
       useEffect(() => {
         console.log("useeffect");
