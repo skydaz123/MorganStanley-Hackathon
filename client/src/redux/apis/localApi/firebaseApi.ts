@@ -1,6 +1,6 @@
 import rootApi from "./index"
 import Role from "../../../enums/role"
-import { REPORT_TAG, USER_TAG } from "./tagTypes"
+import { REPORT_TAG, SELF_REPORT_TAG, USER_TAG } from "./tagTypes"
 
 type AddUserPayload = {
     address: string
@@ -74,7 +74,7 @@ export const firebaseApi = rootApi.injectEndpoints({
                 method: "POST",
                 body
             }),
-            invalidatesTags: [REPORT_TAG]
+            invalidatesTags: [SELF_REPORT_TAG, REPORT_TAG]
         }),
         getReports: build.query({
             query: () => `/firebase/getReports`,
@@ -86,7 +86,7 @@ export const firebaseApi = rootApi.injectEndpoints({
                     email: string
                 }[]
             },
-            providesTags: [REPORT_TAG]
+            providesTags: [SELF_REPORT_TAG]
         }),
         getOtherReports: build.query({
             query: (email: string) => `/firebase/getOtherReports?email=${email}`,
@@ -97,7 +97,11 @@ export const firebaseApi = rootApi.injectEndpoints({
                     lb_given: number
                 }[]
             },
-            providesTags: [REPORT_TAG]
+            providesTags: (data, error, arg) => {
+                if (error)
+                    return []
+                return [{ type: REPORT_TAG, id: arg }]
+            }
         }),
     })
 })
