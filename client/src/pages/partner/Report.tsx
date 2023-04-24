@@ -1,88 +1,74 @@
 import useHideSlidingWindowOnLoad from "../../hooks/useHideSlidingWindowOnLoad"
-import { Box, LinearProgress, Stack, Typography } from "@mui/material"
+import { Box, Stack, Typography } from "@mui/material"
 import { z } from "zod"
 import React, { useState } from "react"
 import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
 import FormField from "../../components/FormField"
 import CustomButton from "../../components/CustomButton"
 import { useAddReportMutation } from "../../redux/apis/localApi/firebaseApi"
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { getAuthSlice } from "../../redux/store"
-
-const inputSchema = z.number()
-    .positive("Amount needs to be positive")
-    .or(z.string().regex(/\d+/, "Invalid number").transform(Number))
-    .refine((n) => n >= 0)
+import { zodResolver } from "@hookform/resolvers/zod"
+import positiveNumberSchema from "../../schemas/positiveNumberSchema"
+import LoadingBar from "../../components/LoadingBar"
 
 const formSchema = z.object({
-    foodReceived: inputSchema,
-    foodGiven: inputSchema
+    foodReceived: positiveNumberSchema,
+    foodGiven: positiveNumberSchema,
 })
 
-export default function Request() {
-    useHideSlidingWindowOnLoad()
-
-    const state = useSelector(getAuthSlice)
+export default function Report() {
+    const { user } = useSelector(getAuthSlice)
     const [loading, setLoading] = useState(false)
     const [addReport] = useAddReportMutation()
 
     const { control, handleSubmit, reset } = useForm({
         defaultValues: {
             foodReceived: "",
-            foodDonated: "",
+            foodGiven: "",
         },
-        //resolver: zodResolver(formSchema),
+        resolver: zodResolver(formSchema),
         mode: "all",
     })
 
     const submit = handleSubmit(async values => {
-        setLoading(true)
-        console.log("State is", state);
-        const {foodReceived, foodDonated} = values;
-        let lb_recieved = parseInt(foodReceived)
-        let lb_given = parseInt(foodDonated);
+        if (loading)
+            return
 
-        // @ts-ignore
-        let email: any = state.user.email;
+        const {
+            foodReceived,
+            foodGiven
+        } = values
 
-        try{
-            setLoading(true);
-            const result = await addReport({
-                lb_recieved,
-                lb_given,
-                email,
+        try {
+            setLoading(true)
 
+            await addReport({
+                lb_recieved: Number(foodReceived),
+                lb_given: Number(foodGiven),
+                email: user?.email ?? "[UNKNOWN]",
             }).unwrap()
 
-        }
-        catch (error) {
+            setLoading(false)
+            reset()
+        } catch (error) {
             console.error(error)
+            setLoading(false)
         }
-
-        setLoading(false)
-
-        console.log("[ReportComponent]", values)
-        reset()
     })
 
     return (
         <Box sx={{ p: "32px" }}>
             <Typography variant="h4" gutterBottom sx={{
-                color: '#F46E21',
-                fontSize: '30px',
-                fontFamily: 'Montserrat',
+                color: '#EC701B',
+                fontFamily: 'Montserrat, sans-serif',
             }}>
                 Report Submission
             </Typography>
             <Stack spacing="20px" maxWidth="500px">
                 {
                     loading &&
-                    <LinearProgress sx={{
-                        "& .MuiLinearProgress-bar": {
-                            backgroundColor: "#EC701B"
-                        }
-                    }}/>
+                    <LoadingBar/>
                 }
                 <FormField
                     control={control}
@@ -92,11 +78,10 @@ export default function Request() {
                 />
                 <FormField
                     control={control}
-                    id="foodDonated"
+                    id="foodGiven"
                     label="Enter the amount of food donated (in lbs)"
                     separateLabel
                 />
-
                 <CustomButton variant="outlined" onClick={submit} disabled={loading}>
                     Submit Report
                 </CustomButton>

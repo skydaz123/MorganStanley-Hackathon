@@ -1,20 +1,29 @@
 import { createSlice } from '@reduxjs/toolkit'
+import Role from "../../enums/role"
 
 type User = {
     id: string
-    name: string | null
+
+    name: string
     email: string
-    token: string
+
+    role: Role
+}
+
+type Token = {
+    value: string
+    expirationTime: number
 }
 
 type AuthState = {
     isLoggedIn: boolean
+    token?: Token
     user?: User
-
 }
 
 const initialState: AuthState = {
     isLoggedIn: false,
+    token: undefined,
     user: undefined,
 }
 
@@ -33,9 +42,17 @@ export const authSlice = createSlice({
         logout: (state, { }: { payload: undefined }) => {
             state.isLoggedIn = false
             state.user = undefined
+            state.token = undefined
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+        },
+        addToken: (state, { payload }: { payload: Token }) => {
+            state.token = payload
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
         },
         register: (state, { payload }: { payload: User }) => {
+            if (state.token === null)
+                throw new Error("Cannot register user without token")
+
             state.user = payload
             state.isLoggedIn = true
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
@@ -45,6 +62,7 @@ export const authSlice = createSlice({
 
 export const {
     logout,
+    addToken,
     register,
 } = authSlice.actions
 

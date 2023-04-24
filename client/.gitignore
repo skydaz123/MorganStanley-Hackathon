@@ -28,6 +28,4 @@ yarn-error.log*
 .vscode/*
 !.vscode/extensions.json
 
-
 package-lock.json
-../client/package-lock.json

@@ -1,5 +1,5 @@
 import Wrapper from "./Wrapper"
-import { LinearProgress, Link, Stack, Typography } from "@mui/material"
+import { Link, Stack, Typography } from "@mui/material"
 import React, { useState } from "react"
 import { useForm } from "react-hook-form"
 import FormField from "../../components/FormField"
@@ -7,13 +7,14 @@ import Divider from "@mui/material/Divider"
 import CustomButton from "../../components/CustomButton"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useNavigate } from "react-router-dom"
 import { signInWithEmailAndPassword } from "firebase/auth"
 import { auth } from "../../firebase"
 import { useDispatch } from "react-redux"
-import { register } from "../../redux/slices/authSlice"
+import { addToken, register } from "../../redux/slices/authSlice"
 import { useLazyGetUserQuery } from "../../redux/apis/localApi/firebaseApi"
-import Role from "../../enums/role"
+import LoadingBar from "../../components/LoadingBar"
+import useRedirectIfLoggedIn from "../../hooks/useRedirectIfLoggedIn"
+import localApi from "../../redux/apis/localApi"
 
 const formSchema = z.object({
     email: z.string()
@@ -25,7 +26,8 @@ const formSchema = z.object({
 })
 
 export default function LogIn() {
-    const navigate = useNavigate()
+    useRedirectIfLoggedIn()
+
     const dispatch = useDispatch()
 
     const [getUser] = useLazyGetUserQuery()
@@ -51,32 +53,22 @@ export default function LogIn() {
 
             const { user } = await signInWithEmailAndPassword(auth, email, password)
 
-            const token = await user.getIdToken(true)
-
-            const result = await getUser(token).unwrap()
-            console.log(result)
-
-            // add result to dispatch
-            dispatch(register({
-                email,
-                id: user.uid,
-                name: user.displayName,
+            const {
                 token,
+                expirationTime,
+            } = await user.getIdTokenResult(true)
+            dispatch(addToken({
+                value: token,
+                expirationTime: new Date(expirationTime).getTime(),
             }))
 
-            // use result.role to navigate
-            switch (result.role) {
-                case Role.Partner:
-                    navigate("/partner")
-                    break
-                case Role.Distributor:
-                    navigate("/map")
-                    break
-                case Role.Unknown:
-                default:
-                    console.error("Invalid role detected")
-                    break
-            }
+            const result = await getUser(undefined).unwrap()
+            dispatch(register({
+                role: result.role,
+                email: result.email,
+                name: result.name,
+                id: user.uid,
+            }))
 
             reset()
         } catch (error) {
@@ -91,11 +83,7 @@ export default function LogIn() {
             <Stack spacing="16px">
                 {
                     loading &&
-                    <LinearProgress sx={{
-                        "& .MuiLinearProgress-bar": {
-                            backgroundColor: "#EC701B"
-                        }
-                    }}/>
+                    <LoadingBar/>
                 }
                 <FormField id="email" control={control} placeholder="Email"/>
                 <FormField id="password" control={control} placeholder="Password" type="password"/>

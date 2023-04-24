@@ -23,7 +23,7 @@ const store = configureStore({
     )
 })
 
-type RootState = ReturnType<typeof store.getState>
+export type RootState = ReturnType<typeof store.getState>
 
 // INSERT slice selectors here
 export const getDemoSlice = (root: RootState) => root[demoSlice.name]

@@ -2,20 +2,16 @@ import BigLoader from "../../../loaders/BigLoader"
 import { useDispatch, useSelector } from "react-redux"
 import { getSignUpSlice } from "../../../redux/store"
 import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
 import { createUserWithEmailAndPassword } from "firebase/auth"
 import { auth } from "../../../firebase"
-import { useLazyGetAddressInfoQuery } from "../../../redux/apis/mapsApi/geocodeApi"
 import { useAddUserMutation } from "../../../redux/apis/localApi/firebaseApi"
-import Role from "../../../enums/role"
 import { resetScenes } from "../../../redux/slices/signUpSlice"
+import { addToken, register } from "../../../redux/slices/authSlice"
 
 export default function SubmissionScene() {
-    const navigate = useNavigate()
     const dispatch = useDispatch()
 
     const { data, currentScene } = useSelector(getSignUpSlice)
-    const [lookup] = useLazyGetAddressInfoQuery()
     const [addUser] = useAddUserMutation()
 
     const [message, setMessage] = useState("Submitting")
@@ -27,10 +23,10 @@ export default function SubmissionScene() {
             email,
             password,
 
-            city,
             zip,
-            street,
-            state,
+            lng,
+            lat,
+            address,
 
             role,
             providerName,
@@ -38,14 +34,17 @@ export default function SubmissionScene() {
             maxCapacity,
         } = data
 
-        const address = [street, city, state, zip].join(", ")
-
         async function operation() {
             const { user } = await createUserWithEmailAndPassword(auth, email, password)
 
-            const { results: [res] } = await lookup(address).unwrap()
-
-            const { geometry: { location: { lat, lng } } } = res
+            const {
+                token,
+                expirationTime,
+            } = await user.getIdTokenResult(true)
+            dispatch(addToken({
+                value: token,
+                expirationTime: new Date(expirationTime).getTime(),
+            }))
 
             const result = await addUser({
                 lat,
@@ -53,26 +52,21 @@ export default function SubmissionScene() {
                 zipcode: zip,
                 email,
                 name: providerName,
-                address,
                 role,
+                address,
                 maxCapacity,
                 phoneNumber,
             }).unwrap()
 
-            switch (result.role) {
-                case Role.Partner:
-                    navigate("/partner")
-                    break
-                case Role.Distributor:
-                    navigate("/map")
-                    break
-                case Role.Unknown:
-                default:
-                    console.error("Invalid role detected")
-                    break
-            }
+            dispatch(register({
+                id: user.uid,
+                name: result.name,
+                email: result.email,
+                role: result.role,
+            }))
             dispatch(resetScenes())
         }
+
         operation().catch(console.error)
     }, [data, currentScene])
 

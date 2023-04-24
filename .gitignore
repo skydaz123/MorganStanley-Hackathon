@@ -2,9 +2,4 @@
 /.idea/
 .vscode/*
 !.vscode/extensions.json
-server/account-key.json
-server/node_modules
-server/package-lock.json
-server/.env*
-client/package-lock.json
 .DS_Store

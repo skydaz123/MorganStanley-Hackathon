@@ -31,6 +31,7 @@ import {
 } from 'recharts';
 import "leaflet-draw"
 import axios from 'axios';
+import LocationModal from './LocationModal';
 
 
 //route draw api
@@ -289,6 +290,14 @@ export default function Map() {
                 <div></div> // Fallback empty element
               )}
             </Modal>
+            <LocationModal
+                isModalOpen={isModalOpen}
+                handleCloseModal={handleCloseModal}
+                selectedLocation={selectedLocation}
+                generateGraphData={generateGraphData}
+              />
+
+            
             <div style={{ display: 'flex', justifyContent: 'end' }}>
               <div style = {{position: 'absolute', zIndex: '1000' }}> 
                 <TableDrawer map={maps} locationList={locations}/>
