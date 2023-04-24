@@ -2,7 +2,6 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import {
   IconButton,
-  Typography,
   Modal,
   List,
   ListItem,
@@ -18,6 +17,7 @@ import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import '@geoman-io/leaflet-geoman-free';  
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';  
 import * as turf from '@turf/turf';
+import TableDrawer from './TableDrawer';
 import React, { useEffect, useState } from 'react';
 import orangeMarker from "./Orange.png"
 import {
@@ -32,10 +32,6 @@ import {
 import "leaflet-draw"
 import axios from 'axios';
 
-
-//replace buttons by leaflet.pm
-//hide 
-import "../css/Map.css"
 
 //route draw api
 import 'leaflet.polyline.snakeanim';
@@ -120,7 +116,8 @@ export default function Map() {
     function MapC() {
       const map = useMap();
       maps = map;
-      maps.flyTo([33.753746,-84.386330], 12)
+      console.log("THe map is ", maps);
+      maps.flyTo([33.753746,-84.386330], 12);
       map.removeControl(map.zoomControl);
       map.attributionControl.setPrefix('');
       
@@ -204,9 +201,9 @@ export default function Map() {
   
     
     
-   useEffect(() => {
-       calculateDistances();
-   }, []);
+  //  useEffect(() => {
+  //      calculateDistances();
+  //  }, []);
 
    useEffect(() => {
     console.log('matrix', distanceMatrix);
@@ -292,6 +289,11 @@ export default function Map() {
                 <div></div> // Fallback empty element
               )}
             </Modal>
+            <div style={{ display: 'flex', justifyContent: 'end' }}>
+              <div style = {{position: 'absolute', zIndex: '1000' }}> 
+                <TableDrawer map={maps} locationList={locations}/>
+              </div>
+            </div>
             <MapContainer
                 style={{ height: '100vh', width: '100wh', position: 'relative' }}
                 center={[0, 0]}
