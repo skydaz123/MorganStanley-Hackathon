@@ -14,3 +14,20 @@ export const app = initializeApp({
 
 export const db = getFirestore(app)
 export const auth = getAuth(app)
+
+// UNCOMMENT TO NUKE AUTH FOR TESTING
+// auth.listUsers(100)
+//     .then(res => res.users.map(u => u.uid))
+//     .then(ids => auth.deleteUsers(ids))
+//     .then(res => {
+//         let failed = false
+//         res.errors.forEach(({ error }) => {
+//             console.log(error.toJSON())
+//             failed = true
+//         })
+//
+//         if (failed)
+//             throw new Error()
+//     })
+//     .then(() => console.log("Success!"))
+//     .catch(() => console.error("Bulk user deletion failed."))
