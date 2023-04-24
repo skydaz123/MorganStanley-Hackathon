@@ -9,8 +9,6 @@ import { Stack } from '@mui/material'
 import GridRow from "./GridRow"
 
 export default function Profile() {
-    useHideSlidingWindowOnLoad()
-
     const { data: user, isFetching, error, isError } = useGetUserQuery(undefined)
 
     useEffect(() => {

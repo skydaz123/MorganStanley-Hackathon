@@ -9,8 +9,6 @@ import { useGetReportsQuery } from "../../../redux/apis/localApi/firebaseApi"
 import LoadingSkeleton from "./LoadingSkeleton"
 
 export default function Stats() {
-    useHideSlidingWindowOnLoad()
-
     const { data, isFetching, isError, error } = useGetReportsQuery(undefined)
 
     useEffect(() => {

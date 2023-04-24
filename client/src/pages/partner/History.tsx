@@ -41,8 +41,6 @@ const columns: GridColDef[] = [
 ]
 
 export default function History() {
-    useHideSlidingWindowOnLoad()
-
     const { data, isFetching, isError, error } = useGetReportsQuery(undefined)
 
     useEffect(() => {

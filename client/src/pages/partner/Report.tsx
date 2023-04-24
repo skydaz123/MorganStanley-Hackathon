@@ -18,8 +18,6 @@ const formSchema = z.object({
 })
 
 export default function Report() {
-    useHideSlidingWindowOnLoad()
-
     const { user } = useSelector(getAuthSlice)
     const [loading, setLoading] = useState(false)
     const [addReport] = useAddReportMutation()
