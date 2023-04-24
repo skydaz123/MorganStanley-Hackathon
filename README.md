@@ -1,4 +1,4 @@
-#WasteNoBites
+# WasteNoBites
 
 WasteNoBites is a technology-driven platform that strives to equitably distribute food to those in need by connecting food pantries and partners, such as restaurants and grocery stores, with food banks in their local communities. This streamlined process allows distributors to provide accurate details about their food usage and excess, enabling food banks to optimize their distribution more effectively. WasteNoBites also collects information about food pantries, such as their storage size, which enables the platform to determine their eligibility to serve as a secondary food bank. By reducing food waste, WasteNoBites ensures that individuals and families experiencing food insecurity have access to nutritious meals.
 
