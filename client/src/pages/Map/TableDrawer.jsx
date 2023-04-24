@@ -14,12 +14,14 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
 import {useEffect} from "react";
+import LeaderboardIcon from '@mui/icons-material/Leaderboard';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
-const drawerWidth = 750;
+const drawerWidth = 500;
 
+//make copy of locations
+var locationCopy = null;
 //Modified Drawer Template
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
@@ -60,6 +62,19 @@ export default function TableDrawer({map, locationList}) {
 
         console.log("useeffect ", map);
         console.log("location ", locationList);
+        for(let i = 0; i < locationList.length; i++)
+        {
+          if(locationList[i].isBank)
+          {
+            locationList.splice(i, 1);
+          }
+        }
+        locationCopy = locationList;
+
+        locationCopy.sort(function(a, b) {
+          return b.score - a.score;
+        });
+        console.log("location is now", locationCopy)
     }, [map])
 
     //console.log(props.map);
@@ -81,9 +96,10 @@ export default function TableDrawer({map, locationList}) {
     return <></>;
   }
 
-  function handleClick() {
+  function handleClick(key) {
+    console.log("key is ", key);
     console.log(locationList);
-    map.flyTo([0,0], 12)    
+    map.flyTo([locationList[key].lat, locationList[key].lng], 15)    
   }
 
 
@@ -99,7 +115,7 @@ export default function TableDrawer({map, locationList}) {
             onClick={handleDrawerOpen}
             sx={{ ...(open && { display: 'none' }) }}
           >
-            <MenuIcon style={{fontSize: '200%', color: 'orange'}}/>
+            <ArrowBackIosIcon style={{fontSize: '200%', color: 'rgba(0, 0, 0, 0.54)'}}/>
           </IconButton>
         </Toolbar>
       <Main open={open}>
@@ -126,11 +142,15 @@ export default function TableDrawer({map, locationList}) {
             <List>
             {locationList.map((text, index) => (
                     <ListItem key={index} disablePadding>
-                    <ListItemButton onClick={handleClick}>
+                    <ListItemButton onClick={() => {
+                          console.log("Clicked item with key:", index);
+                          handleClick(index);
+                        }}>
                         <ListItemIcon>
-                        {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                          <LeaderboardIcon/>
                         </ListItemIcon>
-                        <ListItemText primary={text.address} />
+                        <ListItemText primary={text.score} />
+                        <ListItemText primary={text.name}/>
                     </ListItemButton>
                     </ListItem>
                 ))}
@@ -140,3 +160,8 @@ export default function TableDrawer({map, locationList}) {
     </Box>
   );
 }
+/*
+      <ListItemIcon>
+      {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+      </ListItemIcon>
+      */

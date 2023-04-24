@@ -2,10 +2,6 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import {
   IconButton,
-  Modal,
-  List,
-  ListItem,
-  ListItemText,
 } from '@mui/material'; // Import Modal here
 import Stack from '@mui/material/Stack';
 import L, { Icon } from 'leaflet';
@@ -20,15 +16,6 @@ import * as turf from '@turf/turf';
 import TableDrawer from './TableDrawer';
 import React, { useEffect, useState } from 'react';
 import orangeMarker from "../../images/OrangeMarker.png"
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-} from 'recharts';
 import "leaflet-draw"
 import axios from 'axios';
 import LocationModal from '../../components/LocationModal';
@@ -251,7 +238,7 @@ export default function Map() {
 
             
             <div style={{ display: 'flex', justifyContent: 'end' }}>
-              <div style = {{position: 'absolute', zIndex: '1000' }}> 
+              <div style = {{position: 'absolute', zIndex: '1000', right: 0 }}> 
                 <TableDrawer map={maps} locationList={locations}/>
               </div>
             </div>
