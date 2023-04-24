@@ -19,7 +19,7 @@ import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 import * as turf from '@turf/turf';
 import TableDrawer from './TableDrawer';
 import React, { useEffect, useState } from 'react';
-import orangeMarker from "./Orange.png"
+import orangeMarker from "./OrangeMarker.png"
 import {
   LineChart,
   Line,
