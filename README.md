@@ -7,15 +7,19 @@ WasteNoBites is a technology-driven platform that strives to equitably distribut
 To get started with WasteNoBites, follow these steps:
 
 Clone the repository to your local machine:
-git clone https://github.com/skydaz123/MorganStanley-Hackathon.git
+`git clone https://github.com/skydaz123/MorganStanley-Hackathon.git`
+
 Navigate to the project directory:
-cd client and/ server
+`cd MorganStanley-Hackathon`
+
 Install the necessary dependencies:
-npm install
+`npm install`
+
 Start the client side:
-npm start
+`npm start`
+
 Start the server side:
-npm start
+`npm start`
 
 This will start the development server and open the application in your default web browser.
 (Note: You will need to have the keys in order to run the application. See
@@ -26,21 +30,30 @@ addition information.)
 WasteNoBites was built with the following technologies:
 
 MUI for styling, components, and icons
+
 Redux Toolkit for connecting to the server and caching responses
+
 Redux for state management
+
 Functional JavaScript and TypeScript
+
 Firebase for backend and Firebase AUTH for authentication
+
 Leaflet for mapping API
+
 Geocoding API from Google to convert addresses to coordinates
 
 ===========================================================================
 ## Contributing
 If you'd like to contribute to WasteNoBites, follow these steps:
 
-Fork the repository.
-Create a new branch with a descriptive name.
-Make your changes and push to the new branch.
-Submit a pull request to the master branch.
+1. Fork the repository.
+
+2. Create a new branch with a descriptive name.
+
+3. Make your changes and push to the new branch.
+
+4. Submit a pull request to the master branch.
 
 ===========================================================================
 ## Additional Information
@@ -53,16 +66,25 @@ run our application you may need to contact us for the them.
 ## Developers
 WasteNoBites was developed by the following individuals:
 
-Alex Huang
-Benny Liu
-Biraj Ghimire
-Brian Shao
-Hao Duong
-Hou Chi Chan
-Tony Bui
-Vitaliy Stusalitus
-Vu Huynh
-Yangfa Wu
+-Alex Huang
+
+-Benny Liu
+
+-Biraj Ghimire
+
+-Brian Shao
+
+-Hao Duong
+
+-Hou Chi Chan
+
+-Tony Bui
+
+-Vitaliy Stusalitus
+
+-Vu Huynh
+
+-Yangfa Wu
 
 ===========================================================================
 ## License
