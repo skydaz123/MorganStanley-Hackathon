@@ -13,7 +13,7 @@ import AutoAuthLayout from "./layouts/AutoAuthLayout"
 const Home = lazy(() => import("./pages/Home"))
 
 const WithAuthLayout = lazy(() => import("./layouts/WithAuthLayout"))
-const Map = lazy(() => import("./components/Map"))
+const Map = lazy(() => import("./pages/Map"))
 
 const router = createBrowserRouter(
     createRoutesFromElements(

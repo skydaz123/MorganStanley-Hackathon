@@ -4,8 +4,8 @@ import IconButton from '@mui/material/IconButton';
 import InputBase, { InputBaseProps } from '@mui/material/InputBase'
 import Paper from '@mui/material/Paper';
 import { useEffect } from "react";
-import { useLazyGetAddressInfoQuery } from "../redux/apis/mapsApi/geocodeApi"
-import { updateCenter } from '../redux/slices/mapSlice';
+import { useLazyGetAddressInfoQuery } from "../../redux/apis/mapsApi/geocodeApi"
+import { updateCenter } from '../../redux/slices/mapSlice';
 import { useDispatch } from "react-redux"
 import { useState } from 'react';
 
